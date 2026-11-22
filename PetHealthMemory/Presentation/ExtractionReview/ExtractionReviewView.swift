@@ -310,7 +310,7 @@ struct ExtractionReviewView: View {
                     .buttonStyle(.plain)
                     .foregroundStyle(AppTheme.Colors.warningText)
                 }
-                Text("Resolve the items marked in each record, or untick records you don't want.")
+                Text("Check the marked items, or untick any record you don't want to keep.")
                     .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .multilineTextAlignment(.center)

@@ -39,7 +39,7 @@ struct SettingsView: View {
 
             Section("Privacy") {
                 privacyRow("Text recognition", onDevice: true)
-                privacyRow("Detail extraction", onDevice: container.extractionService.isAvailableOnDevice)
+                privacyRow("Auto-fill from documents", onDevice: container.extractionService.isAvailableOnDevice)
                 LabeledContent("Analytics & tracking", value: String(localized: "None"))
             }
 
@@ -120,7 +120,7 @@ struct SettingsView: View {
                 Label("On this device", systemImage: "checkmark.shield")
                     .foregroundStyle(AppTheme.Colors.successText)
             } else {
-                Text("Not available — manual entry")
+                Text("Not on this device — you type the details")
                     .multilineTextAlignment(.trailing)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
