@@ -60,6 +60,8 @@ final class AppStoreScreenshots: XCTestCase {
             field.tap()
             field.typeText("Rab\n") // Return submits and hides the keyboard
             sleep(1)
+            // iPad: open the matching record so the detail column isn't a placeholder.
+            if isPad { tap(app.staticTexts["Riverside Animal Clinic"].firstMatch) }
             capture("appstore-05-search")
         }
         if !isPad, app.buttons["Done"].firstMatch.exists { app.buttons["Done"].firstMatch.tap() }
@@ -75,8 +77,10 @@ final class AppStoreScreenshots: XCTestCase {
 
     private func open(_ section: String) {
         if isPad {
-            // Sidebar row; on iPad portrait the sidebar may be collapsed, so landscape is forced.
-            tap(app.staticTexts[section].firstMatch)
+            // Sidebar row (the first list). Plain staticTexts[section] can hit a same-named
+            // heading in the detail column, e.g. the "Reminders" card.
+            let sidebarRow = app.collectionViews.firstMatch.staticTexts[section].firstMatch
+            if !tap(sidebarRow) { tap(app.staticTexts[section].firstMatch) }
         } else {
             tap(app.tabBars.buttons[section].firstMatch)
         }
