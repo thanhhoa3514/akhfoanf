@@ -49,10 +49,10 @@ enum SnoozeOption: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .oneHour: "In 1 hour"
-        case .tonight: "This evening"
-        case .tomorrow: "Tomorrow morning"
-        case .nextWeek: "Next week"
+        case .oneHour: String(localized: "In 1 hour")
+        case .tonight: String(localized: "This evening")
+        case .tomorrow: String(localized: "Tomorrow morning")
+        case .nextWeek: String(localized: "Next week")
         }
     }
 

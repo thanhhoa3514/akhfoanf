@@ -39,7 +39,7 @@ struct HealthEventFormView: View {
                     }
                 }
                 TextField(titlePlaceholder, text: $title)
-                DatePicker(type == .medication ? "Start date" : "Date", selection: $date, displayedComponents: .date)
+                DatePicker(type == .medication ? String(localized: "Start date") : String(localized: "Date"), selection: $date, displayedComponents: .date)
                 TextField("Clinic (optional)", text: $clinic)
                 if clinic.isEmpty, !providers.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -85,7 +85,7 @@ struct HealthEventFormView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .canvasBackground()
-        .navigationTitle(existing == nil ? "New Record" : "Edit Record")
+        .navigationTitle(existing == nil ? String(localized: "New Record") : String(localized: "Edit Record"))
         .inlineTitleOnPhone()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }

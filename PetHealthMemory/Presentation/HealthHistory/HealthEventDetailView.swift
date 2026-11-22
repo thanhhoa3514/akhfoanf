@@ -89,27 +89,27 @@ struct HealthEventDetailView: View {
     private func detailsCard(_ event: HealthEventModel) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
             if let clinic = event.providerName {
-                InfoRow(label: "Clinic", value: clinic, systemImage: "building.2")
+                InfoRow(label: String(localized: "Clinic"), value: clinic, systemImage: "building.2")
             }
             if event.eventType == .vaccination {
                 InfoRow(
-                    label: "Next due",
-                    value: event.nextDueDate?.shortDate ?? "Not stated",
+                    label: String(localized: "Next due"),
+                    value: event.nextDueDate?.shortDate ?? String(localized: "Not stated"),
                     systemImage: "calendar.badge.clock"
                 )
             }
             if event.eventType == .medication {
                 if let dosage = event.dosageText {
-                    InfoRow(label: "Dosage", value: dosage, systemImage: "pills", verbatim: true)
+                    InfoRow(label: String(localized: "Dosage"), value: dosage, systemImage: "pills", verbatim: true)
                 }
                 if let frequency = event.frequencyText {
-                    InfoRow(label: "Frequency", value: frequency, systemImage: "repeat", verbatim: true)
+                    InfoRow(label: String(localized: "Frequency"), value: frequency, systemImage: "repeat", verbatim: true)
                 }
                 if let start = event.startDate {
-                    InfoRow(label: "Started", value: start.shortDate, systemImage: "play.circle")
+                    InfoRow(label: String(localized: "Started"), value: start.shortDate, systemImage: "play.circle")
                 }
                 if let end = event.endDate {
-                    InfoRow(label: "Ends", value: end.shortDate, systemImage: "stop.circle")
+                    InfoRow(label: String(localized: "Ends"), value: end.shortDate, systemImage: "stop.circle")
                 }
                 Toggle(isOn: Binding(
                     get: { event.isActiveMedication },
@@ -126,7 +126,7 @@ struct HealthEventDetailView: View {
                 .sensoryFeedback(.selection, trigger: event.medicationStatus)
             }
             if event.providerName == nil && event.eventType != .vaccination && event.eventType != .medication {
-                InfoRow(label: "Type", value: event.eventType.title, systemImage: "tag")
+                InfoRow(label: String(localized: "Type"), value: event.eventType.title, systemImage: "tag")
             }
         }
         .card()
@@ -169,9 +169,9 @@ struct HealthEventDetailView: View {
 
     private func remindersCard(_ event: HealthEventModel) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Reminders", actionTitle: "Add") { addReminder(for: event) }
+            SectionHeader(title: String(localized: "Reminders"), actionTitle: String(localized: "Add")) { addReminder(for: event) }
             if reminders.isEmpty {
-                Text(event.nextDueDate != nil ? "The document states a next due date. Add a reminder?" : "No reminders for this record.")
+                Text(event.nextDueDate != nil ? String(localized: "The document states a next due date. Add a reminder?") : String(localized: "No reminders for this record."))
                     .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }

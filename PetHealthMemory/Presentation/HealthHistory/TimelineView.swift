@@ -8,12 +8,12 @@ enum TimelineFilter: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .all: "All"
-        case .visits: "Visits"
-        case .vaccines: "Vaccines"
-        case .medications: "Meds"
-        case .labs: "Labs"
-        case .other: "Other"
+        case .all: String(localized: "All")
+        case .visits: String(localized: "Visits")
+        case .vaccines: String(localized: "Vaccines")
+        case .medications: String(localized: "Meds")
+        case .labs: String(localized: "Labs")
+        case .other: String(localized: "Other")
         }
     }
 
@@ -180,7 +180,7 @@ struct TimelineRow: View {
                 HStack(spacing: AppTheme.Spacing.xs) {
                     if event.eventType == .medication {
                         Pill(
-                            text: event.isActiveMedication ? "Active" : "Completed",
+                            text: event.isActiveMedication ? String(localized: "Active") : String(localized: "Completed"),
                             systemImage: event.isActiveMedication ? "circle.fill" : "checkmark",
                             tint: event.isActiveMedication ? AppTheme.Colors.statusSuccess : AppTheme.Colors.textSecondary,
                             textColor: event.isActiveMedication ? AppTheme.Colors.successText : AppTheme.Colors.textSecondary

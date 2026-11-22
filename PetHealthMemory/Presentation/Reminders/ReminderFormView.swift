@@ -51,7 +51,7 @@ struct ReminderFormView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .canvasBackground()
-        .navigationTitle(existing == nil ? "New Reminder" : "Edit Reminder")
+        .navigationTitle(existing == nil ? String(localized: "New Reminder") : String(localized: "Edit Reminder"))
         .inlineTitleOnPhone()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }

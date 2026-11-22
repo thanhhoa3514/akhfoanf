@@ -124,13 +124,13 @@ struct SourceBadge: View {
             tint: AppTheme.Colors.statusSource,
             textColor: AppTheme.Colors.sourceText
         )
-        .accessibilityLabel("Source document: \(title)")
+        .accessibilityLabel(Text("Source document: \(title)"))
     }
 }
 
 /// AI-uncertain marker. Amber + dashed stroke + question icon + "Check" label (distinct from due-soon amber).
 struct NeedsCheckBadge: View {
-    var text: String = "Check"
+    var text: String = String(localized: "Check")
 
     var body: some View {
         Pill(
@@ -169,18 +169,18 @@ struct DueState {
         let calendar = Calendar.current
         let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: date)).day ?? 0
         if isCompleted {
-            label = "Done"; symbol = "checkmark"; fill = AppTheme.Colors.statusSuccess; text = AppTheme.Colors.successText
+            label = String(localized: "Done"); symbol = "checkmark"; fill = AppTheme.Colors.statusSuccess; text = AppTheme.Colors.successText
         } else if date < now && days < 0 {
-            label = days == -1 ? "Overdue · yesterday" : "Overdue · \(-days)d"
+            label = days == -1 ? String(localized: "Overdue · yesterday") : String(localized: "Overdue · \(-days)d")
             symbol = "exclamationmark.circle.fill"; fill = AppTheme.Colors.statusDanger; text = AppTheme.Colors.dangerText
         } else if days == 0 {
-            label = "Today"; symbol = "clock.fill"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
+            label = String(localized: "Today"); symbol = "clock.fill"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
         } else if days <= soonWindow {
-            label = days == 1 ? "Due tomorrow" : "Due in \(days) days"
+            label = days == 1 ? String(localized: "Due tomorrow") : String(localized: "Due in \(days) days")
             symbol = "clock"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
         } else {
             // Always say what the date means — a bare date chip was ambiguous (given? due?).
-            label = "Due " + date.formatted(.dateTime.day().month(.abbreviated).year())
+            label = String(localized: "Due \(date.formatted(.dateTime.day().month(.abbreviated).year()))")
             symbol = "calendar"; fill = AppTheme.Colors.textSecondary; text = AppTheme.Colors.textSecondary
         }
     }

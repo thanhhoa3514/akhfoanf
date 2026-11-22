@@ -81,7 +81,7 @@ struct ExportReportView: View {
                 Button(action: generate) {
                     HStack {
                         if isGenerating { ProgressView().controlSize(.small) }
-                        Text(reportURL == nil ? "Create PDF" : "Create again")
+                        Text(reportURL == nil ? String(localized: "Create PDF") : String(localized: "Create again"))
                     }
                 }
                 .buttonStyle(.primary)
@@ -139,7 +139,7 @@ struct ExportReportView: View {
                     pet: pet, events: events, weights: weights, documents: documents, options: resolvedOptions
                 )
             } catch {
-                errorMessage = (error as? LocalizedError)?.errorDescription ?? "The PDF couldn't be created."
+                errorMessage = (error as? LocalizedError)?.errorDescription ?? String(localized: "The PDF couldn't be created.")
             }
             isGenerating = false
         }

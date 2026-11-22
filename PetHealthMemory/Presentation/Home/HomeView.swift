@@ -238,7 +238,7 @@ struct HomeView: View {
     @ViewBuilder
     private var attentionSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Needs attention")
+            SectionHeader(title: String(localized: "Needs attention"))
             if dueSoon.isEmpty && docsToReview.isEmpty && failedDocs.isEmpty {
                 Label("All caught up", systemImage: "checkmark.seal")
                     .font(.appSubheadline)
@@ -249,15 +249,15 @@ struct HomeView: View {
                     ForEach(docsToReview.prefix(3)) { doc in
                         attentionRow(
                             icon: "doc.badge.ellipsis", tint: AppTheme.Colors.statusWarning,
-                            title: "Review \(doc.displayTitle)",
-                            subtitle: doc.status == .extracted ? "Details found — confirm before saving" : "Text read — add details by hand"
+                            title: String(localized: "Review \(doc.displayTitle)"),
+                            subtitle: doc.status == .extracted ? String(localized: "Details found — confirm before saving") : String(localized: "Text read — add details by hand")
                         ) { appState.sheet = .review(documentID: doc.id) }
                     }
                     ForEach(failedDocs.prefix(2)) { doc in
                         attentionRow(
                             icon: "exclamationmark.triangle", tint: AppTheme.Colors.statusDanger,
-                            title: "Couldn't read \(doc.displayTitle)",
-                            subtitle: "Retry or enter details by hand"
+                            title: String(localized: "Couldn't read \(doc.displayTitle)"),
+                            subtitle: String(localized: "Retry or enter details by hand")
                         ) { appState.open(.document(doc.id), in: .documents, compact: isCompact) }
                     }
                     ForEach(dueSoon.prefix(4)) { reminder in
@@ -302,13 +302,13 @@ struct HomeView: View {
 
     private var vetSummarySection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Ready for the vet", actionTitle: "Export PDF") { appState.sheet = .export }
+            SectionHeader(title: String(localized: "Ready for the vet"), actionTitle: String(localized: "Export PDF")) { appState.sheet = .export }
             VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
-                summaryGroup(title: "Active medications", symbol: "pills.fill", empty: "None recorded", items: activeMeds.map { med in
+                summaryGroup(title: String(localized: "Active medications"), symbol: "pills.fill", empty: String(localized: "None recorded"), items: activeMeds.map { med in
                     SummaryItem(id: med.id, name: med.title, detail: [med.dosageText, med.frequencyText].compactMap { $0 }.joined(separator: " · "))
                 })
                 Divider()
-                summaryGroup(title: "Latest vaccinations", symbol: "syringe.fill", empty: "None recorded", items: latestVaccines.prefix(4).map { vaccine in
+                summaryGroup(title: String(localized: "Latest vaccinations"), symbol: "syringe.fill", empty: String(localized: "None recorded"), items: latestVaccines.prefix(4).map { vaccine in
                     let given = "Given \(vaccine.eventDate.shortDate)"
                     return SummaryItem(
                         id: vaccine.id, name: vaccine.title,
@@ -317,7 +317,7 @@ struct HomeView: View {
                 })
                 if !allergies.isEmpty {
                     Divider()
-                    summaryGroup(title: "Allergies", symbol: "allergens.fill", empty: "", items: allergies.map { SummaryItem(id: $0.id, name: $0.title, detail: $0.notes ?? "") })
+                    summaryGroup(title: String(localized: "Allergies"), symbol: "allergens.fill", empty: "", items: allergies.map { SummaryItem(id: $0.id, name: $0.title, detail: $0.notes ?? "") })
                 }
             }
             .card()
@@ -355,7 +355,7 @@ struct HomeView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Recent history", actionTitle: events.isEmpty ? nil : "See all") {
+            SectionHeader(title: String(localized: "Recent history"), actionTitle: events.isEmpty ? nil : "See all") {
                 appState.section = .history
             }
             if events.isEmpty {

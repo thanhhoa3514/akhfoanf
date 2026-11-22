@@ -5,22 +5,22 @@ import SwiftData
 extension ExtractionFieldKey {
     var label: String {
         switch self {
-        case .documentType: "Document type"
-        case .petName: "Pet name on document"
-        case .clinic: "Clinic"
-        case .visitDate: "Visit date"
-        case .vaccineName: "Vaccine"
-        case .vaccineDate: "Date given"
-        case .nextDueDate: "Next due"
-        case .medicationName: "Medication"
-        case .dosageText: "Dosage"
-        case .frequencyText: "Frequency"
-        case .startDate: "Start date"
-        case .endDate: "End date"
-        case .diagnosisText: "Diagnosis"
-        case .labResultText: "Lab result"
-        case .weight: "Weight"
-        case .notes: "Notes"
+        case .documentType: String(localized: "Document type")
+        case .petName: String(localized: "Pet name on document")
+        case .clinic: String(localized: "Clinic")
+        case .visitDate: String(localized: "Visit date")
+        case .vaccineName: String(localized: "Vaccine")
+        case .vaccineDate: String(localized: "Date given")
+        case .nextDueDate: String(localized: "Next due")
+        case .medicationName: String(localized: "Medication")
+        case .dosageText: String(localized: "Dosage")
+        case .frequencyText: String(localized: "Frequency")
+        case .startDate: String(localized: "Start date")
+        case .endDate: String(localized: "End date")
+        case .diagnosisText: String(localized: "Diagnosis")
+        case .labResultText: String(localized: "Lab result")
+        case .weight: String(localized: "Weight")
+        case .notes: String(localized: "Notes")
         }
     }
 
@@ -49,12 +49,12 @@ enum ReviewRecordKind: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .visit: "Vet visit"
-        case .vaccination: "Vaccination"
-        case .medication: "Medication"
-        case .diagnosis: "Diagnosis"
-        case .labResult: "Lab result"
-        case .weight: "Weight"
+        case .visit: String(localized: "Vet visit")
+        case .vaccination: String(localized: "Vaccination")
+        case .medication: String(localized: "Medication")
+        case .diagnosis: String(localized: "Diagnosis")
+        case .labResult: String(localized: "Lab result")
+        case .weight: String(localized: "Weight")
         }
     }
 
@@ -232,7 +232,7 @@ final class ExtractionReviewModel {
         if record.field(record.kind.primaryKey) == nil { issues.append("Add \(record.kind.primaryKey.label.lowercased())") }
         if resolvedDate(for: record) == nil { issues.append("Add a date") }
         let unchecked = record.fields.filter(\.needsCheck).count
-        if unchecked > 0 { issues.append(unchecked == 1 ? "Check 1 field" : "Check \(unchecked) fields") }
+        if unchecked > 0 { issues.append(unchecked == 1 ? String(localized: "Check 1 field") : String(localized: "Check \(unchecked) fields")) }
         let badDates = record.fields.filter { $0.key.isDate && !$0.isEmpty && $0.dateValue == nil }.count
         if badDates > 0 { issues.append("Fix date format") }
         return issues
@@ -246,7 +246,7 @@ final class ExtractionReviewModel {
     var saveTitle: String {
         if includedRecords.isEmpty { return "Select a record to save" }
         if blockingCount > 0 { return blockingCount == 1 ? "1 record needs attention" : "\(blockingCount) records need attention" }
-        return includedRecords.count == 1 ? "Save 1 record" : "Save \(includedRecords.count) records"
+        return includedRecords.count == 1 ? String(localized: "Save 1 record") : String(localized: "Save \(includedRecords.count) records")
     }
 
     // MARK: Editing
@@ -333,7 +333,7 @@ final class ExtractionReviewModel {
             }
 
             let title: String = switch record.kind {
-            case .visit: clinic.map { "Visit — \($0)" } ?? "Vet visit"
+            case .visit: clinic.map { String(localized: "Visit — \($0)") } ?? String(localized: "Vet visit")
             case .diagnosis, .labResult: String((record.field(record.kind.primaryKey)?.value ?? record.kind.title).prefix(80))
             default: record.field(record.kind.primaryKey)?.value ?? record.kind.title
             }

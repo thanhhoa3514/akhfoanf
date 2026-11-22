@@ -162,7 +162,7 @@ struct ReminderRow: View {
             }
             .buttonStyle(.plain)
             .sensoryFeedback(.success, trigger: isDone) { _, done in done }
-            .accessibilityLabel(isDone ? "Completed. Mark as not done" : "Mark as done")
+            .accessibilityLabel(isDone ? String(localized: "Completed. Mark as not done") : String(localized: "Mark as done"))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(reminder.title)

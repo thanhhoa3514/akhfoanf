@@ -46,7 +46,7 @@ struct SettingsView: View {
                         Text("Not available — manual entry").foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                 }
-                LabeledContent("Analytics & tracking", value: "None")
+                LabeledContent("Analytics & tracking", value: String(localized: "None"))
             }
 
             Section("Notifications") {
