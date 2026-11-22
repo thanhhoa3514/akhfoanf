@@ -116,7 +116,7 @@ struct SearchView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     TimelineRow(event: event, sourceTitle: nil, showsRail: false)
                                     if pets.count > 1, let name = petNames[event.petId] {
-                                        Text(name).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary).padding(.leading, 48)
+                                        Text(name).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary).padding(.leading, 48)
                                     }
                                 }
                             }
@@ -134,10 +134,10 @@ struct SearchView: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(doc.displayTitle).font(.body.weight(.semibold))
                                         Text([doc.docType.title, pets.count > 1 ? petNames[doc.petId] : nil].compactMap { $0 }.joined(separator: " · "))
-                                            .font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                                            .font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                                         if let snippet {
                                             Text(Self.highlight(snippet, term: trimmed))
-                                                .font(.caption)
+                                                .font(.appCaption)
                                                 .foregroundStyle(AppTheme.Colors.textSecondary)
                                                 .lineLimit(3)
                                         }

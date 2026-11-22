@@ -150,8 +150,8 @@ struct ExtractionReviewView: View {
         HStack(spacing: AppTheme.Spacing.md) {
             DocumentThumbnail(document: document, size: 52)
             VStack(alignment: .leading, spacing: 2) {
-                Text(document.displayTitle).font(.subheadline.weight(.semibold)).lineLimit(1)
-                Text("Compare with the original as you go").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                Text(document.displayTitle).font(.appSubheadline.weight(.semibold)).lineLimit(1)
+                Text("Compare with the original as you go").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             Spacer()
             Button("View") {
@@ -212,9 +212,9 @@ struct ExtractionReviewView: View {
         if model.isManualMode {
             Label {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Automatic extraction isn't available").font(.subheadline.weight(.semibold))
+                    Text("Automatic extraction isn't available").font(.appSubheadline.weight(.semibold))
                     Text("The text was read on this device. Add records and copy details from the recognized text.")
-                        .font(.caption)
+                        .font(.appCaption)
                 }
             } icon: {
                 Image(systemName: "text.viewfinder")
@@ -226,11 +226,11 @@ struct ExtractionReviewView: View {
             Label {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("We found \(model.records.count) \(model.records.count == 1 ? "record" : "records")")
-                        .font(.subheadline.weight(.semibold))
+                        .font(.appSubheadline.weight(.semibold))
                     Text(flagged > 0
                          ? "\(flagged) \(flagged == 1 ? "field is" : "fields are") marked Check — compare them with the original."
                          : "Check each one against the original before saving.")
-                        .font(.caption)
+                        .font(.appCaption)
                 }
             } icon: {
                 Image(systemName: flagged > 0 ? "questionmark.circle.fill" : "checklist")
@@ -246,7 +246,7 @@ struct ExtractionReviewView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
             HStack {
                 Text("Document type")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                 Spacer()
                 Picker("Document type", selection: $model.documentType) {
@@ -261,7 +261,7 @@ struct ExtractionReviewView: View {
                     HStack(alignment: .top) {
                         Image(systemName: "questionmark.circle.fill").foregroundStyle(AppTheme.Colors.statusWarning)
                         Text("This document mentions “\(field.value)”. Records will be saved to \(pet.name).")
-                            .font(.subheadline)
+                            .font(.appSubheadline)
                             .foregroundStyle(AppTheme.Colors.warningText)
                     }
                 }
@@ -298,13 +298,13 @@ struct ExtractionReviewView: View {
                         }
                     } label: {
                         Label("Show next item to check", systemImage: "arrow.down.circle")
-                            .font(.subheadline.weight(.semibold))
+                            .font(.appSubheadline.weight(.semibold))
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(AppTheme.Colors.warningText)
                 }
                 Text("Resolve the items marked in each record, or untick records you don't want.")
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -350,7 +350,7 @@ private struct RecordCard: View {
 
                 TypeIcon(systemImage: record.kind.eventType.symbol, tint: record.kind.eventType.tint)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(record.kind.title).font(.caption.weight(.semibold)).foregroundStyle(AppTheme.Colors.textSecondary)
+                    Text(record.kind.title).font(.appCaption.weight(.semibold)).foregroundStyle(AppTheme.Colors.textSecondary)
                     Text(record.field(record.kind.primaryKey)?.value.nilIfEmpty.map(displayTitle) ?? "New \(record.kind.title.lowercased())")
                         .font(.headline)
                         .lineLimit(2)
@@ -396,7 +396,7 @@ private struct RecordCard: View {
                     }
                     if record.field(record.kind.dateKey) == nil, let fallbackDate {
                         Label("Date: visit date \(fallbackDate.shortDate)", systemImage: "calendar")
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -445,7 +445,7 @@ private struct FieldRow: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(field.key.label)
-                    .font(.caption.weight(.semibold))
+                    .font(.appCaption.weight(.semibold))
                     .foregroundStyle(field.needsCheck ? AppTheme.Colors.warningText : AppTheme.Colors.textSecondary)
                 if field.needsCheck { NeedsCheckBadge() }
                 if field.key.isVerbatim {
@@ -471,7 +471,7 @@ private struct FieldRow: View {
                         Text("“\(source)”").lineLimit(2).multilineTextAlignment(.leading)
                         if let page = field.pageNumber { Text("· p.\(page)") }
                     }
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.sourceText)
                 }
                 .buttonStyle(.plain)
@@ -480,7 +480,7 @@ private struct FieldRow: View {
 
             if field.needsCheck {
                 Button(field.isEmpty ? "Leave empty" : "Looks right", action: onLooksRight)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .buttonStyle(.bordered)
                     .tint(AppTheme.Colors.warningText)
             }
@@ -507,6 +507,9 @@ private struct FieldRow: View {
                     displayedComponents: .date
                 )
                 .labelsHidden()
+                #if os(macOS)
+                .datePickerStyle(.compact)
+                #endif
             } else {
                 HStack {
                     Text(field.isEmpty ? "Not found" : "“\(field.value)” — unclear format")
@@ -516,7 +519,7 @@ private struct FieldRow: View {
                     Button("Set date") { onSetDraft(ReviewDate.string(.now)) }
                         .buttonStyle(.bordered)
                 }
-                .font(.subheadline)
+                .font(.appSubheadline)
             }
         } else {
             TextField(field.key.label, text: $text, axis: .vertical)
@@ -555,7 +558,7 @@ struct SourcePane: View {
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
                         if let highlight {
                             Label("Showing “\(highlight)”", systemImage: "text.quote")
-                                .font(.caption.weight(.semibold))
+                                .font(.appCaption.weight(.semibold))
                                 .foregroundStyle(AppTheme.Colors.sourceText)
                         }
                         Text(highlighted(document.ocrText ?? "No text was recognized.", term: highlight))
@@ -618,8 +621,8 @@ private struct SavedConfirmationView: View {
                             HStack(spacing: AppTheme.Spacing.md) {
                                 TypeIcon(systemImage: item.type.symbol, tint: item.type.tint)
                                 VStack(alignment: .leading) {
-                                    Text(item.title).font(.subheadline.weight(.semibold))
-                                    Text(item.date.shortDate).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                                    Text(item.title).font(.appSubheadline.weight(.semibold))
+                                    Text(item.date.shortDate).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                                 }
                                 Spacer()
                             }
@@ -633,7 +636,7 @@ private struct SavedConfirmationView: View {
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
                         Text("Add a reminder?").font(.headline)
                         Text("These dates are stated on the document.")
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                         ForEach(dueSuggestions) { item in
                             Button {

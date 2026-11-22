@@ -118,8 +118,8 @@ struct DocumentDetailView: View {
                 Image(systemName: "questionmark.circle.fill").font(.title2).foregroundStyle(AppTheme.Colors.statusWarning)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(document.status == .extracted ? "Details are waiting for your review" : "Text is ready — add details")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Nothing is added to the timeline until you confirm.").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                        .font(.appSubheadline.weight(.semibold))
+                    Text("Nothing is added to the timeline until you confirm.").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                 }
                 Spacer()
                 Button("Review") { appState.sheet = .review(documentID: documentID) }
@@ -129,9 +129,9 @@ struct DocumentDetailView: View {
         case .failed:
             VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
                 Label("The text couldn't be read", systemImage: "exclamationmark.triangle.fill")
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.Colors.dangerText)
-                if let retryError { Text(retryError).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary) }
+                if let retryError { Text(retryError).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary) }
                 HStack {
                     Button {
                         Task {
@@ -167,7 +167,7 @@ struct DocumentDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
             HStack {
                 Label("Type", systemImage: "tag")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                 Spacer()
                 Picker("Type", selection: Binding(
@@ -178,6 +178,7 @@ struct DocumentDetailView: View {
                 }
                 .labelsHidden()
                 .pickerStyle(.menu)
+                .fixedSize()
             }
             Divider()
             InfoRow(label: "Imported", value: document.createdAt.formatted(date: .long, time: .omitted), systemImage: "calendar")
@@ -186,7 +187,7 @@ struct DocumentDetailView: View {
                 InfoRow(label: "Pages", value: "\(pages)", systemImage: "doc.on.doc")
             }
             Label("Stored privately on this device", systemImage: "lock.shield")
-                .font(.caption)
+                .font(.appCaption)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
         }
         .card()

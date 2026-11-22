@@ -73,7 +73,7 @@ struct TileLabelStyle: LabelStyle {
         VStack(spacing: AppTheme.Spacing.xs) {
             configuration.icon.font(.title3)
             configuration.title
-                .font(.subheadline.weight(.semibold))
+                .font(.appSubheadline.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
@@ -105,7 +105,7 @@ struct Pill: View {
             }
             Text(text).lineLimit(1)
         }
-        .font(.caption.weight(.semibold))
+        .font(.appCaption.weight(.semibold))
         .foregroundStyle(textColor)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
@@ -247,7 +247,7 @@ struct SectionHeader: View {
             Spacer()
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.Colors.brandText)
                     .frame(minHeight: AppTheme.Size.minTouch)
             }
@@ -276,7 +276,7 @@ struct FilterPillBar<Option: Hashable & Identifiable>: View {
                         }
                     } label: {
                         Text(title(option))
-                            .font(.subheadline.weight(.semibold))
+                            .font(.appSubheadline.weight(.semibold))
                             .foregroundStyle(isSelected ? AppTheme.Colors.onBrandPrimary : AppTheme.Colors.textPrimary)
                             .padding(.horizontal, 14)
                             .frame(minHeight: 36)
@@ -362,7 +362,7 @@ struct InfoRow: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                 Text(value)
                     .font(.body)

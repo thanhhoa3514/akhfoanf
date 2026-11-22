@@ -99,14 +99,14 @@ struct HomeView: View {
                             .font(.title2.weight(.bold))
                             .foregroundStyle(AppTheme.Colors.textPrimary)
                         Image(systemName: "chevron.down")
-                            .font(.caption.weight(.bold))
+                            .font(.appCaption.weight(.bold))
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                 }
                 .menuStyle(.button)
                 .buttonStyle(.plain)
                 Text(pet?.subtitle ?? "")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .lineLimit(1)
                 syncIndicator
@@ -136,7 +136,7 @@ struct HomeView: View {
         let mode = SyncMode(rawValue: syncModeRaw) ?? .localOnly
         if mode != .localOnly {
             Label(mode == .iCloud ? "iCloud · Synced" : "Backend · Synced", systemImage: "checkmark.icloud")
-                .font(.caption)
+                .font(.appCaption)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
         }
     }
@@ -151,7 +151,7 @@ struct HomeView: View {
                     Text("Add a vet document")
                         .font(.headline)
                     Text("Read on this device. You check everything before it's saved.")
-                        .font(.subheadline)
+                        .font(.appSubheadline)
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                 }
             }
@@ -172,7 +172,7 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Add a vet document").font(.headline)
                 Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
             Spacer(minLength: AppTheme.Spacing.md)
@@ -222,11 +222,11 @@ struct HomeView: View {
     private func guideStep(_ number: Int, _ text: String, _ symbol: String) -> some View {
         HStack(spacing: AppTheme.Spacing.md) {
             Text("\(number)")
-                .font(.subheadline.weight(.bold))
+                .font(.appSubheadline.weight(.bold))
                 .foregroundStyle(AppTheme.Colors.brandText)
                 .frame(width: 28, height: 28)
                 .background(AppTheme.Colors.brandPrimarySoft, in: Circle())
-            Text(text).font(.subheadline)
+            Text(text).font(.appSubheadline)
             Spacer(minLength: 0)
             Image(systemName: symbol).foregroundStyle(AppTheme.Colors.textSecondary)
         }
@@ -241,7 +241,7 @@ struct HomeView: View {
             SectionHeader(title: "Needs attention")
             if dueSoon.isEmpty && docsToReview.isEmpty && failedDocs.isEmpty {
                 Label("All caught up", systemImage: "checkmark.seal")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.successText)
                     .card()
             } else {
@@ -282,14 +282,14 @@ struct HomeView: View {
             HStack(spacing: AppTheme.Spacing.md) {
                 TypeIcon(systemImage: icon, tint: tint)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(AppTheme.Colors.textPrimary).lineLimit(2)
+                    Text(title).font(.appSubheadline.weight(.semibold)).foregroundStyle(AppTheme.Colors.textPrimary).lineLimit(2)
                     if let subtitle {
-                        Text(subtitle).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                        Text(subtitle).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                 }
                 Spacer(minLength: 0)
                 badge
-                Image(systemName: "chevron.right").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                Image(systemName: "chevron.right").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             .padding(.horizontal, AppTheme.Spacing.lg)
             .padding(.vertical, AppTheme.Spacing.md)
@@ -333,16 +333,16 @@ struct HomeView: View {
     private func summaryGroup(title: String, symbol: String, empty: String, items: [SummaryItem]) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
             Label(title, systemImage: symbol)
-                .font(.subheadline.weight(.semibold))
+                .font(.appSubheadline.weight(.semibold))
                 .foregroundStyle(AppTheme.Colors.textSecondary)
             if items.isEmpty {
-                Text(empty).font(.subheadline).foregroundStyle(AppTheme.Colors.textSecondary)
+                Text(empty).font(.appSubheadline).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             ForEach(items) { item in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.name).font(.body.weight(.medium)).foregroundStyle(AppTheme.Colors.textPrimary)
                     if !item.detail.isEmpty {
-                        Text(item.detail).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                        Text(item.detail).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -360,7 +360,7 @@ struct HomeView: View {
             }
             if events.isEmpty {
                 Text("Confirmed records will appear here.")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .card()
             } else {

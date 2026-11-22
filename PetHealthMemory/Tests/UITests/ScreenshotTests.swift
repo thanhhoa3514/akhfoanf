@@ -123,15 +123,14 @@ final class ScreenshotTests: XCTestCase {
         }
     }
 
-    /// Clicks the list row (cell) that contains `title`, falling back to the text itself.
+    /// Clicks the list row showing `title`. SwiftUI list rows on macOS often report
+    /// isHittable == false, so click the text's centre by coordinate instead.
     @discardableResult
     private func selectRow(_ app: XCUIApplication, _ title: String) -> Bool {
-        let cell = app.cells.containing(.staticText, identifier: title).firstMatch
-        if cell.waitForExistence(timeout: 3) {
-            cell.click()
-            return true
-        }
-        return tapIfExists(app.staticTexts[title].firstMatch)
+        let text = app.staticTexts[title].firstMatch
+        guard text.waitForExistence(timeout: 3) else { return false }
+        text.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).click()
+        return true
     }
     #endif
 

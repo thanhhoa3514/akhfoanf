@@ -100,6 +100,26 @@ enum AppTheme {
     }
 }
 
+extension Font {
+    /// Secondary text. macOS `.caption` is 10pt (too small at reading distance), so it steps up.
+    static var appCaption: Font {
+        #if os(macOS)
+        .subheadline
+        #else
+        .caption
+        #endif
+    }
+
+    /// Supporting text under titles. macOS `.subheadline` is 11pt; use 12pt `.callout` there.
+    static var appSubheadline: Font {
+        #if os(macOS)
+        .callout
+        #else
+        .subheadline
+        #endif
+    }
+}
+
 extension Color {
     static func adaptive(light: UInt32, dark: UInt32) -> Color {
         #if canImport(UIKit)

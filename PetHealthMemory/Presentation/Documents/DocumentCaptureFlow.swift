@@ -131,7 +131,7 @@ struct DocumentCaptureFlow: View {
                 TypeIcon(systemImage: symbol, size: 40)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.body.weight(.semibold)).foregroundStyle(AppTheme.Colors.textPrimary)
-                    Text(subtitle).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                    Text(subtitle).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppTheme.Colors.textSecondary)
@@ -157,7 +157,7 @@ struct DocumentCaptureFlow: View {
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                 if pipeline.document != nil {
                     Label("The original is saved in Documents.", systemImage: "checkmark.shield")
-                        .font(.subheadline)
+                        .font(.appSubheadline)
                         .foregroundStyle(AppTheme.Colors.successText)
                 }
             }

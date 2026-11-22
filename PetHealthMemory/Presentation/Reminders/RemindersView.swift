@@ -47,9 +47,9 @@ struct RemindersView: View {
                     HStack(alignment: .top, spacing: AppTheme.Spacing.md) {
                         Image(systemName: "bell.slash").foregroundStyle(AppTheme.Colors.statusWarning)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Notifications are off").font(.subheadline.weight(.semibold))
-                            Text("Reminders still show here, but won't alert you.").font(.caption)
-                            Button("Turn on in Settings") { SystemSettings.open() }.font(.caption.weight(.semibold))
+                            Text("Notifications are off").font(.appSubheadline.weight(.semibold))
+                            Text("Reminders still show here, but won't alert you.").font(.appCaption)
+                            Button("Turn on in Settings") { SystemSettings.open() }.font(.appCaption.weight(.semibold))
                         }
                     }
                 }
@@ -173,14 +173,14 @@ struct ReminderRow: View {
                     DueBadge(date: reminder.dueDate, isCompleted: isDone, soonWindow: reminder.soonWindow)
                     if reminder.recurrence != .none {
                         Label(reminder.recurrence.title, systemImage: "repeat")
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                     if reminder.state == .snoozed {
-                        Label("Snoozed", systemImage: "moon.zzz").font(.caption).foregroundStyle(AppTheme.Colors.sourceText)
+                        Label("Snoozed", systemImage: "moon.zzz").font(.appCaption).foregroundStyle(AppTheme.Colors.sourceText)
                     }
                     if let petName {
-                        Text(petName).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                        Text(petName).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                 }
             }

@@ -57,7 +57,7 @@ struct DocumentsListView: View {
                             }
                         } label: {
                             Label(typeFilter?.title ?? "All types", systemImage: "line.3.horizontal.decrease")
-                                .font(.caption)
+                                .font(.appCaption)
                         }
                         .fixedSize()
                     }
@@ -95,6 +95,7 @@ struct DocumentsListView: View {
                 } label: {
                     Label("Add document", systemImage: "plus")
                 }
+                .menuIndicator(.hidden)
                 .help("Import a document (⌘I)")
             }
         }
@@ -120,7 +121,7 @@ struct DocumentsListView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(doc.displayTitle).font(.body.weight(.semibold)).lineLimit(2)
                     Text("\(doc.docType.title) · \(doc.createdAt.shortDate)")
-                        .font(.caption)
+                        .font(.appCaption)
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                     DocumentStatusPill(status: doc.status)
                 }

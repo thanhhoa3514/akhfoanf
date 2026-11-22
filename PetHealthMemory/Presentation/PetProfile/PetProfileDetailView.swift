@@ -87,7 +87,7 @@ struct PetProfileDetailView: View {
         VStack(spacing: AppTheme.Spacing.md) {
             PetAvatar(pet: pet, size: 104)
             Text(pet.name).font(.title.weight(.bold))
-            Text(pet.subtitle).font(.subheadline).foregroundStyle(AppTheme.Colors.textSecondary)
+            Text(pet.subtitle).font(.appSubheadline).foregroundStyle(AppTheme.Colors.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, AppTheme.Spacing.md)
@@ -133,7 +133,7 @@ struct PetProfileDetailView: View {
                 .accessibilityLabel("Weight trend")
             } else {
                 Text(weights.isEmpty ? "No weight logged yet" : "Log one more entry to see a trend")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
         }
