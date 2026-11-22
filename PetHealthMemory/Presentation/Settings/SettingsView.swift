@@ -81,7 +81,7 @@ struct SettingsView: View {
             Section("Developer") {
                 Toggle("Simulate detail extraction", isOn: $simulateExtraction)
                 Text("Returns sample fields so the review screen can be tested before Foundation Models is wired up.")
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
             #endif

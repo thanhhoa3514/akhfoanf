@@ -58,8 +58,16 @@ struct SidebarView: View {
             VStack(spacing: AppTheme.Spacing.sm) {
                 Button { appState.sheet = .capture(source: nil) } label: {
                     Label("Import Document", systemImage: "doc.badge.plus")
+                        #if os(macOS)
+                        .frame(maxWidth: .infinity)
+                        #endif
                 }
+                #if os(macOS)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                #else
                 .buttonStyle(.primary)
+                #endif
                 .help("Import a PDF or photo (⌘I). You can also drop files onto Documents.")
                 #if os(iOS)
                 Button { appState.sheet = .settings } label: {

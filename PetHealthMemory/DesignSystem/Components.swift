@@ -31,15 +31,21 @@ extension View {
 struct PrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
+    #if os(macOS)
+    static let font = Font.body.weight(.semibold)
+    #else
+    static let font = Font.headline
+    #endif
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline)
-            .foregroundStyle(AppTheme.Colors.onBrandPrimary)
+            .font(Self.font)
+            .foregroundStyle(isEnabled ? AppTheme.Colors.onBrandPrimary : AppTheme.Colors.textSecondary)
             .lineLimit(1)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.button)
             .padding(.horizontal, AppTheme.Spacing.md)
             .background(
-                AppTheme.Colors.brandPrimary.opacity(isEnabled ? 1 : 0.4),
+                isEnabled ? AppTheme.Colors.brandPrimary : AppTheme.Colors.bgElevated,
                 in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
             )
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -51,10 +57,10 @@ struct PrimaryButtonStyle: ButtonStyle {
 struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline)
+            .font(PrimaryButtonStyle.font)
             .foregroundStyle(AppTheme.Colors.brandText)
             .lineLimit(1)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.button)
             .padding(.horizontal, AppTheme.Spacing.md)
             .background(AppTheme.Colors.brandPrimarySoft, in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous))
             .opacity(configuration.isPressed ? 0.8 : 1)
@@ -67,7 +73,7 @@ struct TileLabelStyle: LabelStyle {
         VStack(spacing: AppTheme.Spacing.xs) {
             configuration.icon.font(.title3)
             configuration.title
-                .font(.subheadline.weight(.semibold))
+                .font(.appSubheadline.weight(.semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
@@ -99,7 +105,7 @@ struct Pill: View {
             }
             Text(text).lineLimit(1)
         }
-        .font(.caption.weight(.semibold))
+        .font(.appCaption.weight(.semibold))
         .foregroundStyle(textColor)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
@@ -140,9 +146,11 @@ struct NeedsCheckBadge: View {
 struct DueBadge: View {
     let date: Date
     var isCompleted = false
+    /// Days ahead that count as "due soon". Vaccines get a longer runway (book the vet).
+    var soonWindow = DueState.defaultSoonWindow
 
     var body: some View {
-        let state = DueState(date: date, isCompleted: isCompleted)
+        let state = DueState(date: date, isCompleted: isCompleted, soonWindow: soonWindow)
         Pill(text: state.label, systemImage: state.symbol, tint: state.fill, textColor: state.text)
     }
 }
@@ -154,7 +162,10 @@ struct DueState {
     let fill: Color
     let text: Color
 
-    init(date: Date, isCompleted: Bool = false, now: Date = .now) {
+    static let defaultSoonWindow = 7
+    static let vaccineSoonWindow = 30
+
+    init(date: Date, isCompleted: Bool = false, soonWindow: Int = DueState.defaultSoonWindow, now: Date = .now) {
         let calendar = Calendar.current
         let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: date)).day ?? 0
         if isCompleted {
@@ -164,11 +175,12 @@ struct DueState {
             symbol = "exclamationmark.circle.fill"; fill = AppTheme.Colors.statusDanger; text = AppTheme.Colors.dangerText
         } else if days == 0 {
             label = "Today"; symbol = "clock.fill"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
-        } else if days <= 7 {
-            label = days == 1 ? "Tomorrow" : "In \(days) days"
+        } else if days <= soonWindow {
+            label = days == 1 ? "Due tomorrow" : "Due in \(days) days"
             symbol = "clock"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
         } else {
-            label = date.formatted(.dateTime.day().month(.abbreviated).year())
+            // Always say what the date means — a bare date chip was ambiguous (given? due?).
+            label = "Due " + date.formatted(.dateTime.day().month(.abbreviated).year())
             symbol = "calendar"; fill = AppTheme.Colors.textSecondary; text = AppTheme.Colors.textSecondary
         }
     }
@@ -235,7 +247,7 @@ struct SectionHeader: View {
             Spacer()
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.Colors.brandText)
                     .frame(minHeight: AppTheme.Size.minTouch)
             }
@@ -264,7 +276,7 @@ struct FilterPillBar<Option: Hashable & Identifiable>: View {
                         }
                     } label: {
                         Text(title(option))
-                            .font(.subheadline.weight(.semibold))
+                            .font(.appSubheadline.weight(.semibold))
                             .foregroundStyle(isSelected ? AppTheme.Colors.onBrandPrimary : AppTheme.Colors.textPrimary)
                             .padding(.horizontal, 14)
                             .frame(minHeight: 36)
@@ -350,7 +362,7 @@ struct InfoRow: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                 Text(value)
                     .font(.body)

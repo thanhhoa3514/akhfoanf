@@ -142,6 +142,8 @@ extension DocumentModel {
 
 extension ReminderModel {
     var type: ReminderType { ReminderType(rawValue: reminderType) ?? .custom }
+    /// How many days ahead this reminder counts as "due soon".
+    var soonWindow: Int { type == .vaccination ? DueState.vaccineSoonWindow : DueState.defaultSoonWindow }
     var state: ReminderStatus { ReminderStatus(rawValue: status) ?? .pending }
     var isOpen: Bool { state == .pending || state == .snoozed }
     var recurrence: RecurrenceOption { RecurrenceOption(rule: recurrenceRule) }

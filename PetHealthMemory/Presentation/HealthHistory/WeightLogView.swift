@@ -47,7 +47,7 @@ struct WeightLogView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("\(entry.weight.formatted(.number.precision(.fractionLength(0...2)))) \(entry.unit)").font(.body.weight(.semibold))
-                                if let notes = entry.notes { Text(notes).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary) }
+                                if let notes = entry.notes { Text(notes).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary) }
                             }
                             Spacer()
                             Text(entry.measurementDate.shortDate).foregroundStyle(AppTheme.Colors.textSecondary)

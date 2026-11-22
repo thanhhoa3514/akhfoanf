@@ -6,6 +6,7 @@ import SwiftUI
 struct PetProfileDetailView: View {
     let petID: UUID
 
+    @Environment(\.isCompactLayout) private var isCompact
     @Environment(\.modelContext) private var context
     @Environment(AppState.self) private var appState
     @Environment(AppContainer.self) private var container
@@ -34,14 +35,15 @@ struct PetProfileDetailView: View {
                         }
                         .card()
                     }
-                    Button(role: .destructive) {
-                        footprint = DataCleanup.footprint(of: petID, in: context)
-                        confirmDelete = true
-                    } label: {
-                        Label("Delete \(pet.name)'s profile", systemImage: "trash")
-                            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.minTouch)
+                    // iPhone: at the end of the profile. Wide layouts: in the toolbar's "…" menu,
+                    // so a destructive action never sits in the always-visible Home detail column.
+                    if isCompact {
+                        Button(role: .destructive, action: requestDelete) {
+                            Label("Delete \(pet.name)'s profile", systemImage: "trash")
+                                .frame(maxWidth: .infinity, minHeight: AppTheme.Size.minTouch)
+                        }
+                        .foregroundStyle(AppTheme.Colors.dangerText)
                     }
-                    .foregroundStyle(AppTheme.Colors.dangerText)
                 }
                 .padding(AppTheme.Spacing.lg)
                 .frame(maxWidth: 720)
@@ -53,6 +55,15 @@ struct PetProfileDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Edit") { appState.sheet = .editPet(petID) }
+                }
+                if !isCompact {
+                    ToolbarItem(placement: .primaryAction) {
+                        Menu {
+                            Button("Delete \(pet.name)'s Profile…", systemImage: "trash", role: .destructive, action: requestDelete)
+                        } label: {
+                            Label("More", systemImage: "ellipsis.circle")
+                        }
+                    }
                 }
             }
             .confirmationDialog("Delete \(pet.name)?", isPresented: $confirmDelete, titleVisibility: .visible) {
@@ -67,11 +78,16 @@ struct PetProfileDetailView: View {
         }
     }
 
+    private func requestDelete() {
+        footprint = DataCleanup.footprint(of: petID, in: context)
+        confirmDelete = true
+    }
+
     private func header(_ pet: PetModel) -> some View {
         VStack(spacing: AppTheme.Spacing.md) {
             PetAvatar(pet: pet, size: 104)
             Text(pet.name).font(.title.weight(.bold))
-            Text(pet.subtitle).font(.subheadline).foregroundStyle(AppTheme.Colors.textSecondary)
+            Text(pet.subtitle).font(.appSubheadline).foregroundStyle(AppTheme.Colors.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, AppTheme.Spacing.md)
@@ -111,11 +127,13 @@ struct PetProfileDetailView: View {
                 }
                 .chartXAxis(.hidden)
                 .chartYAxis(.hidden)
+                // Zoom to the data: a 9.8 → 10.4 kg change was a flat line on a 0-based axis.
+                .chartYScale(domain: .automatic(includesZero: false))
                 .frame(height: 56)
                 .accessibilityLabel("Weight trend")
             } else {
                 Text(weights.isEmpty ? "No weight logged yet" : "Log one more entry to see a trend")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
         }

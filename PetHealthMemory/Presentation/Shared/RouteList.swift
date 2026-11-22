@@ -5,6 +5,9 @@ import SwiftUI
 struct RouteList<Content: View>: View {
     @Environment(AppState.self) private var appState
     @Environment(\.isCompactLayout) private var isCompact
+    /// Wide layouts select this when nothing is selected (Mail-style), so the detail column is
+    /// never an empty "Select a …" placeholder while there is something to show.
+    var firstRoute: Route? = nil
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -23,6 +26,13 @@ struct RouteList<Content: View>: View {
         #endif
         .scrollContentBackground(.hidden)
         .canvasBackground()
+        .onChange(of: appState.detailRoute, initial: true) { _, _ in selectFirstIfNeeded() }
+        .onChange(of: firstRoute) { _, _ in selectFirstIfNeeded() }
+    }
+
+    private func selectFirstIfNeeded() {
+        guard !isCompact, appState.detailRoute == nil, let firstRoute else { return }
+        appState.detailRoute = firstRoute
     }
 }
 

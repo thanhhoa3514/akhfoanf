@@ -69,7 +69,7 @@ struct TimelineView: View {
     }
 
     var body: some View {
-        RouteList {
+        RouteList(firstRoute: filtered.first.map { .event($0.id) }) {
             Section {
                 FilterPillBar(options: TimelineFilter.allCases, selection: $filter, title: \.title)
                     .listRowInsets(EdgeInsets())
@@ -113,6 +113,7 @@ struct TimelineView: View {
                 } primaryAction: {
                     appState.sheet = .newEvent(type: nil)
                 }
+                .menuIndicator(.hidden)
                 .help("New health event (⌘N)")
             }
         }
@@ -167,12 +168,12 @@ struct TimelineRow: View {
                         .lineLimit(2)
                     Spacer(minLength: AppTheme.Spacing.sm)
                     Text(event.eventDate.formatted(.dateTime.day().month(.abbreviated)))
-                        .font(.caption)
+                        .font(.appCaption)
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                 }
                 if let detail = keyDetail {
                     Text(detail)
-                        .font(.subheadline)
+                        .font(.appSubheadline)
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                         .lineLimit(2)
                 }
@@ -186,7 +187,8 @@ struct TimelineRow: View {
                         )
                     }
                     if let due = event.nextDueDate {
-                        DueBadge(date: due)
+                        DueBadge(date: due, soonWindow: event.eventType == .vaccination
+                                 ? DueState.vaccineSoonWindow : DueState.defaultSoonWindow)
                     }
                     if let sourceTitle {
                         SourceBadge(title: sourceTitle)

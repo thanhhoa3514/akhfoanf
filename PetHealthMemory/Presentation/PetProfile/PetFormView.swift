@@ -50,7 +50,7 @@ struct PetFormView: View {
                             .font(.largeTitle.weight(.bold))
                             .foregroundStyle(AppTheme.Colors.textPrimary)
                         Label("Everything stays on this device. No account needed.", systemImage: "lock.shield")
-                            .font(.subheadline)
+                            .font(.appSubheadline)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                     }
                     .listRowBackground(Color.clear)

@@ -80,7 +80,7 @@ struct HealthEventDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title).font(.title2.weight(.bold)).foregroundStyle(AppTheme.Colors.textPrimary)
                 Text(event.eventDate.formatted(date: .long, time: .omitted))
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
         }
@@ -143,8 +143,8 @@ struct HealthEventDetailView: View {
                             .zoomSource(id: Route.document(source.id))
                         VStack(alignment: .leading, spacing: 4) {
                             SourceBadge(title: source.docType.title)
-                            Text(source.displayTitle).font(.subheadline.weight(.semibold)).lineLimit(2)
-                            Text("Open the original to verify").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                            Text(source.displayTitle).font(.appSubheadline.weight(.semibold)).lineLimit(2)
+                            Text("Open the original to verify").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                         }
                         Spacer()
                         Image(systemName: "chevron.right").foregroundStyle(AppTheme.Colors.textSecondary)
@@ -156,12 +156,12 @@ struct HealthEventDetailView: View {
             .card()
         } else if hadSource {
             Label("The source document was deleted.", systemImage: "doc.questionmark")
-                .font(.subheadline)
+                .font(.appSubheadline)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
                 .card()
         } else {
             Label("Added by hand — no source document", systemImage: "hand.raised")
-                .font(.subheadline)
+                .font(.appSubheadline)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
                 .card()
         }
@@ -172,7 +172,7 @@ struct HealthEventDetailView: View {
             SectionHeader(title: "Reminders", actionTitle: "Add") { addReminder(for: event) }
             if reminders.isEmpty {
                 Text(event.nextDueDate != nil ? "The document states a next due date. Add a reminder?" : "No reminders for this record.")
-                    .font(.subheadline)
+                    .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
             ForEach(reminders) { reminder in
@@ -180,7 +180,7 @@ struct HealthEventDetailView: View {
                     HStack {
                         Label(reminder.title, systemImage: reminder.type.symbol)
                         Spacer()
-                        DueBadge(date: reminder.dueDate, isCompleted: reminder.state == .completed)
+                        DueBadge(date: reminder.dueDate, isCompleted: reminder.state == .completed, soonWindow: reminder.soonWindow)
                     }
                     .frame(minHeight: AppTheme.Size.minTouch)
                 }

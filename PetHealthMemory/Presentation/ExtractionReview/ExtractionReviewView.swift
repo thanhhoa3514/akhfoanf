@@ -120,24 +120,28 @@ struct ExtractionReviewView: View {
     @ViewBuilder
     private func reviewLayout(_ document: DocumentModel) -> some View {
         if isCompact {
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
-                    documentStrip(document)
-                    fieldsColumn(document)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
+                        documentStrip(document)
+                        fieldsColumn(document)
+                    }
+                    .padding(AppTheme.Spacing.lg)
                 }
-                .padding(AppTheme.Spacing.lg)
+                .safeAreaInset(edge: .bottom) { saveBar(document, proxy: proxy) }
             }
-            .safeAreaInset(edge: .bottom) { saveBar(document) }
         } else {
             HStack(spacing: 0) {
                 SourcePane(document: document, highlight: highlight, pane: $leftPane)
                     .frame(minWidth: 320, maxWidth: .infinity)
                 Divider()
-                ScrollView {
-                    fieldsColumn(document).padding(AppTheme.Spacing.lg)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        fieldsColumn(document).padding(AppTheme.Spacing.lg)
+                    }
+                    .safeAreaInset(edge: .bottom) { saveBar(document, proxy: proxy) }
                 }
                 .frame(minWidth: 360, idealWidth: 440, maxWidth: 560)
-                .safeAreaInset(edge: .bottom) { saveBar(document) }
             }
         }
     }
@@ -146,8 +150,8 @@ struct ExtractionReviewView: View {
         HStack(spacing: AppTheme.Spacing.md) {
             DocumentThumbnail(document: document, size: 52)
             VStack(alignment: .leading, spacing: 2) {
-                Text(document.displayTitle).font(.subheadline.weight(.semibold)).lineLimit(1)
-                Text("Compare with the original as you go").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                Text(document.displayTitle).font(.appSubheadline.weight(.semibold)).lineLimit(1)
+                Text("Compare with the original as you go").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             Spacer()
             Button("View") {
@@ -176,6 +180,7 @@ struct ExtractionReviewView: View {
                         if isCompact { showOriginal = true }
                     }
                 )
+                .id(record.id)
                 .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .bottom)), removal: .opacity.combined(with: .scale(scale: 0.92))))
             }
             Menu {
@@ -207,9 +212,9 @@ struct ExtractionReviewView: View {
         if model.isManualMode {
             Label {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Automatic extraction isn't available").font(.subheadline.weight(.semibold))
+                    Text("Automatic extraction isn't available").font(.appSubheadline.weight(.semibold))
                     Text("The text was read on this device. Add records and copy details from the recognized text.")
-                        .font(.caption)
+                        .font(.appCaption)
                 }
             } icon: {
                 Image(systemName: "text.viewfinder")
@@ -221,11 +226,11 @@ struct ExtractionReviewView: View {
             Label {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("We found \(model.records.count) \(model.records.count == 1 ? "record" : "records")")
-                        .font(.subheadline.weight(.semibold))
+                        .font(.appSubheadline.weight(.semibold))
                     Text(flagged > 0
                          ? "\(flagged) \(flagged == 1 ? "field is" : "fields are") marked Check — compare them with the original."
                          : "Check each one against the original before saving.")
-                        .font(.caption)
+                        .font(.appCaption)
                 }
             } icon: {
                 Image(systemName: flagged > 0 ? "questionmark.circle.fill" : "checklist")
@@ -239,8 +244,16 @@ struct ExtractionReviewView: View {
 
     private var documentCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            Picker("Document type", selection: $model.documentType) {
-                ForEach(DocumentType.allCases, id: \.self) { Text($0.title).tag($0) }
+            HStack {
+                Text("Document type")
+                    .font(.appSubheadline)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
+                Spacer()
+                Picker("Document type", selection: $model.documentType) {
+                    ForEach(DocumentType.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
             }
             ForEach(model.documentFields) { field in
                 if field.key == .petName, let pet, !field.value.isEmpty,
@@ -248,7 +261,7 @@ struct ExtractionReviewView: View {
                     HStack(alignment: .top) {
                         Image(systemName: "questionmark.circle.fill").foregroundStyle(AppTheme.Colors.statusWarning)
                         Text("This document mentions “\(field.value)”. Records will be saved to \(pet.name).")
-                            .font(.subheadline)
+                            .font(.appSubheadline)
                             .foregroundStyle(AppTheme.Colors.warningText)
                     }
                 }
@@ -257,7 +270,12 @@ struct ExtractionReviewView: View {
         .card()
     }
 
-    private func saveBar(_ document: DocumentModel) -> some View {
+    /// First included record that still has something to resolve.
+    private var nextRecordToCheck: ReviewRecord? {
+        model.records.first { $0.included && !model.issues(for: $0).isEmpty }
+    }
+
+    private func saveBar(_ document: DocumentModel, proxy: ScrollViewProxy) -> some View {
         VStack(spacing: AppTheme.Spacing.xs) {
             Button {
                 do {
@@ -273,8 +291,20 @@ struct ExtractionReviewView: View {
             .disabled(!model.canSave)
             .keyboardShortcut(.defaultAction)
             if !model.canSave && !model.includedRecords.isEmpty {
+                if let next = nextRecordToCheck {
+                    Button {
+                        withAnimation(AppTheme.Motion.animation(AppTheme.Motion.standard, reduceMotion: reduceMotion)) {
+                            proxy.scrollTo(next.id, anchor: .top)
+                        }
+                    } label: {
+                        Label("Show next item to check", systemImage: "arrow.down.circle")
+                            .font(.appSubheadline.weight(.semibold))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppTheme.Colors.warningText)
+                }
                 Text("Resolve the items marked in each record, or untick records you don't want.")
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -320,7 +350,7 @@ private struct RecordCard: View {
 
                 TypeIcon(systemImage: record.kind.eventType.symbol, tint: record.kind.eventType.tint)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(record.kind.title).font(.caption.weight(.semibold)).foregroundStyle(AppTheme.Colors.textSecondary)
+                    Text(record.kind.title).font(.appCaption.weight(.semibold)).foregroundStyle(AppTheme.Colors.textSecondary)
                     Text(record.field(record.kind.primaryKey)?.value.nilIfEmpty.map(displayTitle) ?? "New \(record.kind.title.lowercased())")
                         .font(.headline)
                         .lineLimit(2)
@@ -366,7 +396,7 @@ private struct RecordCard: View {
                     }
                     if record.field(record.kind.dateKey) == nil, let fallbackDate {
                         Label("Date: visit date \(fallbackDate.shortDate)", systemImage: "calendar")
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -415,7 +445,7 @@ private struct FieldRow: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(field.key.label)
-                    .font(.caption.weight(.semibold))
+                    .font(.appCaption.weight(.semibold))
                     .foregroundStyle(field.needsCheck ? AppTheme.Colors.warningText : AppTheme.Colors.textSecondary)
                 if field.needsCheck { NeedsCheckBadge() }
                 if field.key.isVerbatim {
@@ -441,7 +471,7 @@ private struct FieldRow: View {
                         Text("“\(source)”").lineLimit(2).multilineTextAlignment(.leading)
                         if let page = field.pageNumber { Text("· p.\(page)") }
                     }
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.sourceText)
                 }
                 .buttonStyle(.plain)
@@ -450,14 +480,14 @@ private struct FieldRow: View {
 
             if field.needsCheck {
                 Button(field.isEmpty ? "Leave empty" : "Looks right", action: onLooksRight)
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .buttonStyle(.bordered)
                     .tint(AppTheme.Colors.warningText)
             }
         }
         .padding(AppTheme.Spacing.md)
         .background(
-            (field.needsCheck ? AppTheme.Colors.statusWarning.opacity(0.10) : AppTheme.Colors.bgElevated),
+            (field.needsCheck ? AppTheme.Colors.statusWarning.opacity(0.10) : Color.clear),
             in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
         )
         .overlay(
@@ -477,6 +507,9 @@ private struct FieldRow: View {
                     displayedComponents: .date
                 )
                 .labelsHidden()
+                #if os(macOS)
+                .datePickerStyle(.compact)
+                #endif
             } else {
                 HStack {
                     Text(field.isEmpty ? "Not found" : "“\(field.value)” — unclear format")
@@ -486,7 +519,7 @@ private struct FieldRow: View {
                     Button("Set date") { onSetDraft(ReviewDate.string(.now)) }
                         .buttonStyle(.bordered)
                 }
-                .font(.subheadline)
+                .font(.appSubheadline)
             }
         } else {
             TextField(field.key.label, text: $text, axis: .vertical)
@@ -525,7 +558,7 @@ struct SourcePane: View {
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
                         if let highlight {
                             Label("Showing “\(highlight)”", systemImage: "text.quote")
-                                .font(.caption.weight(.semibold))
+                                .font(.appCaption.weight(.semibold))
                                 .foregroundStyle(AppTheme.Colors.sourceText)
                         }
                         Text(highlighted(document.ocrText ?? "No text was recognized.", term: highlight))
@@ -588,8 +621,8 @@ private struct SavedConfirmationView: View {
                             HStack(spacing: AppTheme.Spacing.md) {
                                 TypeIcon(systemImage: item.type.symbol, tint: item.type.tint)
                                 VStack(alignment: .leading) {
-                                    Text(item.title).font(.subheadline.weight(.semibold))
-                                    Text(item.date.shortDate).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                                    Text(item.title).font(.appSubheadline.weight(.semibold))
+                                    Text(item.date.shortDate).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                                 }
                                 Spacer()
                             }
@@ -603,7 +636,7 @@ private struct SavedConfirmationView: View {
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
                         Text("Add a reminder?").font(.headline)
                         Text("These dates are stated on the document.")
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                         ForEach(dueSuggestions) { item in
                             Button {

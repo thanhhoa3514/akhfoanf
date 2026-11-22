@@ -16,6 +16,8 @@ struct DocumentDetailView: View {
     @State private var isRetrying = false
     @State private var retryError: String?
     @State private var showFullScreen = false
+    @State private var isRenaming = false
+    @State private var titleDraft = ""
 
     init(documentID: UUID) {
         self.documentID = documentID
@@ -61,7 +63,21 @@ struct DocumentDetailView: View {
                     ShareLink(item: fileURL) { Label("Share original", systemImage: "square.and.arrow.up") }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button(role: .destructive) { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
+                    Menu {
+                        Button("Rename…", systemImage: "pencil") { startRename(document) }
+                        Divider()
+                        Button("Delete…", systemImage: "trash", role: .destructive) { confirmDelete = true }
+                    } label: {
+                        Label("More", systemImage: "ellipsis.circle")
+                    }
+                }
+            }
+            .alert("Rename document", isPresented: $isRenaming) {
+                TextField("Title", text: $titleDraft)
+                Button("Cancel", role: .cancel) {}
+                Button("Save") {
+                    document.title = titleDraft.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+                    try? context.save()
                 }
             }
             .confirmationDialog("Delete this document?", isPresented: $confirmDelete, titleVisibility: .visible) {
@@ -102,8 +118,8 @@ struct DocumentDetailView: View {
                 Image(systemName: "questionmark.circle.fill").font(.title2).foregroundStyle(AppTheme.Colors.statusWarning)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(document.status == .extracted ? "Details are waiting for your review" : "Text is ready — add details")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Nothing is added to the timeline until you confirm.").font(.caption).foregroundStyle(AppTheme.Colors.textSecondary)
+                        .font(.appSubheadline.weight(.semibold))
+                    Text("Nothing is added to the timeline until you confirm.").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                 }
                 Spacer()
                 Button("Review") { appState.sheet = .review(documentID: documentID) }
@@ -113,9 +129,9 @@ struct DocumentDetailView: View {
         case .failed:
             VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
                 Label("The text couldn't be read", systemImage: "exclamationmark.triangle.fill")
-                    .font(.subheadline.weight(.semibold))
+                    .font(.appSubheadline.weight(.semibold))
                     .foregroundStyle(AppTheme.Colors.dangerText)
-                if let retryError { Text(retryError).font(.caption).foregroundStyle(AppTheme.Colors.textSecondary) }
+                if let retryError { Text(retryError).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary) }
                 HStack {
                     Button {
                         Task {
@@ -141,28 +157,37 @@ struct DocumentDetailView: View {
         }
     }
 
+    private func startRename(_ document: DocumentModel) {
+        titleDraft = document.displayTitle
+        isRenaming = true
+    }
+
+    /// Read-only facts; editing is explicit (Rename… in the toolbar menu, the Type menu here).
     private func metadataCard(_ document: DocumentModel) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
-            Picker(selection: Binding(
-                get: { document.docType },
-                set: { document.documentType = $0.rawValue; try? context.save() }
-            )) {
-                ForEach(DocumentType.allCases, id: \.self) { Label($0.title, systemImage: $0.symbol).tag($0) }
-            } label: {
+            HStack {
                 Label("Type", systemImage: "tag")
+                    .font(.appSubheadline)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
+                Spacer()
+                Picker("Type", selection: Binding(
+                    get: { document.docType },
+                    set: { document.documentType = $0.rawValue; try? context.save() }
+                )) {
+                    ForEach(DocumentType.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .fixedSize()
             }
-            TextField("Title", text: Binding(
-                get: { document.title ?? "" },
-                set: { document.title = $0.nilIfEmpty; try? context.save() }
-            ))
-            .textFieldStyle(.roundedBorder)
-            InfoRow(label: "Imported", value: document.createdAt.formatted(date: .long, time: .shortened), systemImage: "calendar")
+            Divider()
+            InfoRow(label: "Imported", value: document.createdAt.formatted(date: .long, time: .omitted), systemImage: "calendar")
             InfoRow(label: "Original file", value: document.originalFileName, systemImage: "doc")
             if let pages = document.pageCount {
                 InfoRow(label: "Pages", value: "\(pages)", systemImage: "doc.on.doc")
             }
             Label("Stored privately on this device", systemImage: "lock.shield")
-                .font(.caption)
+                .font(.appCaption)
                 .foregroundStyle(AppTheme.Colors.textSecondary)
         }
         .card()
