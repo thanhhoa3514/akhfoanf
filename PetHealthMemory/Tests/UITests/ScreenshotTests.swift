@@ -75,7 +75,7 @@ final class ScreenshotTests: XCTestCase {
         open(app, tab: L("Home"))
         if tapIfExists(app.buttons[L("Search")].firstMatch) {
             snapshot(app, "\(prefix)-06-search")
-            tapIfExists(app.buttons[L("Done")].firstMatch)
+            dismissSheet(app)
         }
 
         if tapIfExists(app.buttons[L("Settings")].firstMatch) {
@@ -171,6 +171,13 @@ final class ScreenshotTests: XCTestCase {
         if !tapIfExists(button) {
             XCTFail("Tab '\(tab)' not found")
         }
+    }
+
+    /// Swipes a sheet down by its grabber area (works while the search field hides the nav bar).
+    private func dismissSheet(_ app: XCUIApplication) {
+        let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.09))
+        top.press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98)))
+        Thread.sleep(forTimeInterval: 1)
     }
 
     private func goBack(_ app: XCUIApplication) {
