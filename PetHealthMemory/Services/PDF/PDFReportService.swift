@@ -16,7 +16,7 @@ struct PDFReportOptions: Sendable, Hashable {
 
 enum PDFReportError: LocalizedError {
     case couldNotCreateFile
-    var errorDescription: String? { "The PDF couldn't be created. Please try again." }
+    var errorDescription: String? { String(localized: "The PDF couldn't be created. Please try again.") }
 }
 
 @MainActor
@@ -102,9 +102,9 @@ final class PDFReportService: PDFReportServiceProtocol {
         let rangeText: String = {
             switch (options.startDate, options.endDate) {
             case let (start?, end?): "\(start.shortDate) – \(end.shortDate)"
-            case let (start?, nil): "Since \(start.shortDate)"
-            case let (nil, end?): "Until \(end.shortDate)"
-            default: "All records"
+            case let (start?, nil): String(localized: "Since \(start.shortDate)")
+            case let (nil, end?): String(localized: "Until \(end.shortDate)")
+            default: String(localized: "All records")
             }
         }()
 
@@ -113,11 +113,11 @@ final class PDFReportService: PDFReportServiceProtocol {
         let filtered = events.filter { inRange($0.eventDate) }.sorted { $0.eventDate > $1.eventDate }
 
         if options.includeProfile {
-            blocks.append(.section("Profile"))
+            blocks.append(.section(String(localized: "Profile")))
             var lines: [String] = []
-            if let birth = pet.birthDate { lines.append("Born \(birth.shortDate)") }
-            if let sex = pet.sex, !sex.isEmpty { lines.append("Sex: \(sex)") }
-            if let chip = pet.microchipNumber, !chip.isEmpty { lines.append("Microchip: \(chip)") }
+            if let birth = pet.birthDate { lines.append(String(localized: "Born \(birth.shortDate)")) }
+            if let sex = pet.sex, !sex.isEmpty { lines.append(String(localized: "Sex: \(PetModel.displayName(sex: sex))")) }
+            if let chip = pet.microchipNumber, !chip.isEmpty { lines.append(String(localized: "Microchip: \(chip)")) }
             if !lines.isEmpty { blocks.append(.paragraph(lines.joined(separator: " · "))) }
             if options.includeNotes, let notes = pet.notes, !notes.isEmpty { blocks.append(.paragraph(notes)) }
         }
@@ -126,23 +126,23 @@ final class PDFReportService: PDFReportServiceProtocol {
             filtered.filter { $0.eventType == type }.map { event in
                 var detail: [String] = []
                 if let clinic = event.providerName { detail.append(clinic) }
-                if let due = event.nextDueDate { detail.append("Next due \(due.shortDate)") }
+                if let due = event.nextDueDate { detail.append(String(localized: "Next due \(due.shortDate)")) }
                 if let dosage = event.dosageText { detail.append(dosage) }
                 if let freq = event.frequencyText { detail.append(freq) }
-                if event.eventType == .medication { detail.append(event.isActiveMedication ? "Active" : "Completed") }
+                if event.eventType == .medication { detail.append(event.isActiveMedication ? String(localized: "Active") : String(localized: "Completed")) }
                 if options.includeNotes, let notes = event.notes, !notes.isEmpty { detail.append(notes) }
                 if options.includeDocumentReferences, let src = event.sourceDocumentId, let title = docTitles[src] {
-                    detail.append("Source: \(title)")
+                    detail.append(String(localized: "Source: \(title)"))
                 }
                 return .row(title: event.title, detail: detail.joined(separator: " · "), date: event.eventDate.shortDate)
             }
         }
 
         let sections: [(Bool, String, [HealthEventType])] = [
-            (options.includeVaccinations, "Vaccinations", [.vaccination]),
-            (options.includeMedications, "Medications", [.medication]),
-            (options.includeVisits, "Vet visits", [.veterinaryVisit]),
-            (options.includeOtherEvents, "Other health events", [.surgery, .diagnosis, .allergy, .symptom, .laboratoryResult, .note, .other])
+            (options.includeVaccinations, String(localized: "Vaccinations"), [.vaccination]),
+            (options.includeMedications, String(localized: "Medications"), [.medication]),
+            (options.includeVisits, String(localized: "Vet visits"), [.veterinaryVisit]),
+            (options.includeOtherEvents, String(localized: "Other health events"), [.surgery, .diagnosis, .allergy, .symptom, .laboratoryResult, .note, .other])
         ]
         for (enabled, title, types) in sections where enabled {
             let sectionRows = types.flatMap(rows(for:))
@@ -154,7 +154,7 @@ final class PDFReportService: PDFReportServiceProtocol {
         if options.includeWeights {
             let entries = weights.filter { inRange($0.measurementDate) }.sorted { $0.measurementDate > $1.measurementDate }
             if !entries.isEmpty {
-                blocks.append(.section("Weight"))
+                blocks.append(.section(String(localized: "Weight")))
                 blocks.append(contentsOf: entries.map {
                     .row(title: "\($0.weight.formatted(.number.precision(.fractionLength(0...2)))) \($0.unit)", detail: $0.notes ?? "", date: $0.measurementDate.shortDate)
                 })
@@ -164,12 +164,12 @@ final class PDFReportService: PDFReportServiceProtocol {
         if options.includeDocumentReferences {
             let docs = documents.filter { inRange($0.createdAt) }
             if !docs.isEmpty {
-                blocks.append(.section("Documents on file"))
+                blocks.append(.section(String(localized: "Documents on file")))
                 blocks.append(contentsOf: docs.map { .row(title: $0.displayTitle, detail: $0.docType.title, date: $0.createdAt.shortDate) })
             }
         }
 
-        blocks.append(.paragraph("Generated on \(Date.now.shortDate) by Pet Health Memory from owner-confirmed records. Not a veterinary document."))
+        blocks.append(.paragraph(String(localized: "Generated on \(Date.now.shortDate) by Pet Health Memory from owner-confirmed records. Not a veterinary document.")))
         return blocks
     }
 

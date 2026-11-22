@@ -13,8 +13,8 @@ enum OCRError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .unreadableFile: "This file couldn't be opened."
-        case .noTextFound: "No text was found. The photo may be blurry or too dark."
+        case .unreadableFile: String(localized: "This file couldn't be opened.")
+        case .noTextFound: String(localized: "No text was found. The photo may be blurry or too dark.")
         }
     }
 }

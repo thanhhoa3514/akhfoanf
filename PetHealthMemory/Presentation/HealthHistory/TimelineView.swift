@@ -133,7 +133,7 @@ struct TimelineView: View {
             }
         } else {
             ContentUnavailableView(
-                "No \(filter.title.lowercased()) yet",
+                "Nothing in “\(filter.title)” yet",
                 systemImage: "line.3.horizontal.decrease.circle",
                 description: Text("Try another filter.")
             )

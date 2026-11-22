@@ -18,6 +18,12 @@ struct RemindersView: View {
     enum Scope: String, CaseIterable, Identifiable {
         case thisPet = "This pet", allPets = "All pets"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .thisPet: String(localized: "This pet")
+            case .allPets: String(localized: "All pets")
+            }
+        }
     }
 
     private var reminders: [ReminderModel] {
@@ -36,7 +42,7 @@ struct RemindersView: View {
         RouteList {
             if pets.count > 1 {
                 Picker("Show", selection: $scope) {
-                    ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(Scope.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)

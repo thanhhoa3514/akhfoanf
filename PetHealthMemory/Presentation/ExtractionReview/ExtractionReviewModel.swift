@@ -229,12 +229,12 @@ final class ExtractionReviewModel {
 
     func issues(for record: ReviewRecord) -> [String] {
         var issues: [String] = []
-        if record.field(record.kind.primaryKey) == nil { issues.append("Add \(record.kind.primaryKey.label.lowercased())") }
-        if resolvedDate(for: record) == nil { issues.append("Add a date") }
+        if record.field(record.kind.primaryKey) == nil { issues.append(String(localized: "Add \(record.kind.primaryKey.label)")) }
+        if resolvedDate(for: record) == nil { issues.append(String(localized: "Add a date")) }
         let unchecked = record.fields.filter(\.needsCheck).count
         if unchecked > 0 { issues.append(unchecked == 1 ? String(localized: "Check 1 field") : String(localized: "Check \(unchecked) fields")) }
         let badDates = record.fields.filter { $0.key.isDate && !$0.isEmpty && $0.dateValue == nil }.count
-        if badDates > 0 { issues.append("Fix date format") }
+        if badDates > 0 { issues.append(String(localized: "Fix date format")) }
         return issues
     }
 
@@ -244,7 +244,7 @@ final class ExtractionReviewModel {
     var canSave: Bool { !includedRecords.isEmpty && blockingCount == 0 }
 
     var saveTitle: String {
-        if includedRecords.isEmpty { return "Select a record to save" }
+        if includedRecords.isEmpty { return String(localized: "Select a record to save") }
         if blockingCount > 0 { return blockingCount == 1 ? "1 record needs attention" : "\(blockingCount) records need attention" }
         return includedRecords.count == 1 ? String(localized: "Save 1 record") : String(localized: "Save \(includedRecords.count) records")
     }

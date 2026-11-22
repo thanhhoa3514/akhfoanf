@@ -32,6 +32,12 @@ struct ExtractionReviewView: View {
     enum LeftPane: String, CaseIterable, Identifiable {
         case original = "Original", text = "Recognized text"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .original: String(localized: "Original")
+            case .text: String(localized: "Recognized text")
+            }
+        }
     }
 
     init(documentID: UUID, dismissesFlow: (() -> Void)? = nil) {
@@ -225,11 +231,12 @@ struct ExtractionReviewView: View {
             let flagged = model.flaggedCount
             Label {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("We found \(model.records.count) \(model.records.count == 1 ? "record" : "records")")
+                    Text(model.records.count == 1 ? String(localized: "We found 1 record")
+                                                  : String(localized: "We found \(model.records.count) records"))
                         .font(.appSubheadline.weight(.semibold))
-                    Text(flagged > 0
-                         ? "\(flagged) \(flagged == 1 ? "field is" : "fields are") marked Check — compare them with the original."
-                         : "Check each one against the original before saving.")
+                    Text(flagged == 0 ? String(localized: "Check each one against the original before saving.")
+                         : flagged == 1 ? String(localized: "1 field is marked Check — compare it with the original.")
+                         : String(localized: "\(flagged) fields are marked Check — compare them with the original."))
                         .font(.appCaption)
                 }
             } icon: {
@@ -358,7 +365,7 @@ private struct RecordCard: View {
                 Spacer()
                 Menu {
                     ForEach(addableKeys, id: \.self) { key in
-                        Button("Add \(key.label.lowercased())") {
+                        Button("Add \(key.label)") {
                             withAnimation(AppTheme.Motion.animation(AppTheme.Motion.standard, reduceMotion: reduceMotion)) {
                                 model.addField(key, to: record.id)
                             }
@@ -544,7 +551,7 @@ struct SourcePane: View {
     var body: some View {
         VStack(spacing: 0) {
             Picker("View", selection: $pane) {
-                ForEach(ExtractionReviewView.LeftPane.allCases) { Text($0.rawValue).tag($0) }
+                ForEach(ExtractionReviewView.LeftPane.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             .labelsHidden()

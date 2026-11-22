@@ -150,7 +150,7 @@ struct SettingsView: View {
             exportURL = try DataExport.writeJSON(context: context)
             exportError = nil
         } catch {
-            exportError = "Export failed. Please try again."
+            exportError = String(localized: "Export failed. Please try again.")
         }
     }
 }

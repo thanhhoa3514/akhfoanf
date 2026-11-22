@@ -1,0 +1,1 @@
+hund,katze,impfung,tierarzt,impfpass,tollwut,medikamente,erinnerung,welpe,haustier,befund,scannen

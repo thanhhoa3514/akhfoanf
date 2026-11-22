@@ -17,6 +17,13 @@ struct SearchView: View {
     enum Scope: String, CaseIterable, Identifiable {
         case all = "All", records = "Records", documents = "Documents"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .all: String(localized: "All")
+            case .records: String(localized: "Records")
+            case .documents: String(localized: "Documents")
+            }
+        }
     }
 
     private var trimmed: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -151,7 +158,7 @@ struct SearchView: View {
         }
         .searchable(text: $query, isPresented: $appState.isSearchPresented, prompt: "Vaccines, meds, clinics, document text")
         .searchScopes($scope) {
-            ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+            ForEach(Scope.allCases) { Text($0.title).tag($0) }
         }
         .navigationTitle("Search")
         .modifier(SheetRouteDestinations(enabled: showsDoneButton))

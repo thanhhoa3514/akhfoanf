@@ -21,9 +21,11 @@ def main(root: Path) -> int:
             for unit in file.iter(f"{{{NS['x']}}}trans-unit"):
                 if unit.get("translate") == "no":
                     continue
+                source = unit.find("x:source", NS)
+                if source is None or not (source.text or "").strip():
+                    continue  # empty string, nothing to translate
                 target = unit.find("x:target", NS)
                 if target is None or not (target.text or "").strip() or target.get("state") == "new":
-                    source = unit.find("x:source", NS)
                     missing.setdefault(lang, set()).add(f"{file.get('original')}: {source.text if source is not None else unit.get('id')}")
     for lang, items in sorted(missing.items()):
         print(f"::error::{lang}: {len(items)} untranslated strings")
