@@ -164,20 +164,44 @@ struct HomeView: View {
     }
 
     /// Wide layouts (Mac, iPad): one quiet row instead of the big iPhone capture card.
+    private var captureIcon: some View {
+        Image(systemName: "doc.viewfinder")
+            .font(.title3)
+            .foregroundStyle(AppTheme.Colors.brandText)
+    }
+
+    private var captureText: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Add a vet document").font(.headline)
+            Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
+                .font(.appSubheadline)
+                .foregroundStyle(AppTheme.Colors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var importButton: some View {
+        Button("Import…") { appState.sheet = .capture(source: nil) }
+            .buttonStyle(.borderedProminent)
+    }
+
     private var compactCaptureRow: some View {
-        HStack(spacing: AppTheme.Spacing.md) {
-            Image(systemName: "doc.viewfinder")
-                .font(.title3)
-                .foregroundStyle(AppTheme.Colors.brandText)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Add a vet document").font(.headline)
-                Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
-                    .font(.appSubheadline)
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
+        // Side by side when there is room; in a narrow column (or a long translation) the button
+        // moves under the text instead of squeezing it into a tall strip.
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: AppTheme.Spacing.md) {
+                captureIcon
+                captureText.frame(minWidth: 220, alignment: .leading)
+                Spacer(minLength: AppTheme.Spacing.md)
+                importButton
             }
-            Spacer(minLength: AppTheme.Spacing.md)
-            Button("Import…") { appState.sheet = .capture(source: nil) }
-                .buttonStyle(.borderedProminent)
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
+                HStack(alignment: .top, spacing: AppTheme.Spacing.md) {
+                    captureIcon
+                    captureText
+                }
+                importButton
+            }
         }
         .card(padding: AppTheme.Spacing.md)
         .padding(.top, AppTheme.Spacing.lg)
@@ -288,7 +312,8 @@ struct HomeView: View {
                     }
                 }
                 Spacer(minLength: 0)
-                badge
+                // The badge keeps its full text (long German labels); the title wraps instead.
+                if let badge { badge.fixedSize() }
                 Image(systemName: "chevron.right").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             .padding(.horizontal, AppTheme.Spacing.lg)
