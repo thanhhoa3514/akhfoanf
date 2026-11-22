@@ -262,7 +262,17 @@ struct SheetRouter: View {
         #if os(macOS)
         .frame(minWidth: macSize.width, idealWidth: macSize.width,
                minHeight: macSize.height, idealHeight: macSize.height)
+        #else
+        .modifier(WideSheetSizing(isWide: isWideSheet))
         #endif
+    }
+
+    /// Review shows the original next to the fields; on iPad it needs a page-size sheet.
+    private var isWideSheet: Bool {
+        switch sheet {
+        case .review, .capture: true
+        default: false
+        }
     }
 
     #if os(macOS)
@@ -277,3 +287,18 @@ struct SheetRouter: View {
     }
     #endif
 }
+
+#if os(iOS)
+/// iPad: page-size sheets for side-by-side flows (iOS 18+); form-size elsewhere.
+private struct WideSheetSizing: ViewModifier {
+    let isWide: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *), isWide {
+            content.presentationSizing(.page)
+        } else {
+            content
+        }
+    }
+}
+#endif
