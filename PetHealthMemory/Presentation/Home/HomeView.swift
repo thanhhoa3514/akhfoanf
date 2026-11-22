@@ -149,12 +149,10 @@ struct HomeView: View {
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                 }
             }
-            // One row when the labels fit; stacked at large Dynamic Type sizes instead of wrapping "Pho-tos".
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: AppTheme.Spacing.sm) { captureButtons }
-                VStack(spacing: AppTheme.Spacing.sm) { captureButtons }
-            }
-            .labelStyle(.titleAndIcon)
+            // Icon-over-title tiles: three equal columns always fit an iPhone width
+            // (a horizontal icon + title row truncated "Photos" on 6.1" screens).
+            HStack(spacing: AppTheme.Spacing.sm) { captureButtons }
+                .labelStyle(TileLabelStyle())
         }
         .card()
     }

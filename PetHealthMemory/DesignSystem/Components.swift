@@ -61,6 +61,20 @@ struct SecondaryButtonStyle: ButtonStyle {
     }
 }
 
+/// Icon above a single-line title, for equal-width action tiles (Home capture card).
+struct TileLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: AppTheme.Spacing.xs) {
+            configuration.icon.font(.title3)
+            configuration.title
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .padding(.vertical, AppTheme.Spacing.sm)
+    }
+}
+
 extension ButtonStyle where Self == PrimaryButtonStyle {
     static var primary: PrimaryButtonStyle { PrimaryButtonStyle() }
 }
