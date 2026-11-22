@@ -13,7 +13,7 @@ settings:
   base:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
-    # Pinned until the code is migrated to Swift 6 strict concurrency (see README).
+    # Pinned until the code is migrated to Swift 6 strict concurrency.
     SWIFT_VERSION: "5.0"
     SWIFT_STRICT_CONCURRENCY: minimal
     SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
