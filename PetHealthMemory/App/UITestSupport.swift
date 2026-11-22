@@ -1,3 +1,5 @@
+import CoreGraphics
+import CoreText
 import Foundation
 import SwiftData
 import SwiftUI
@@ -93,6 +95,98 @@ enum SampleData {
             context.insert(WeightEntryModel(petId: pet.id, weight: kg, measurementDate: days(offset)))
         }
 
+        insertDocuments(into: context, petID: pet.id, rabies: rabies, days: days)
         try? context.save()
+    }
+
+    // MARK: Documents
+
+    /// One reviewed certificate (linked to the Rabies record) and one report waiting for review.
+    @MainActor
+    private static func insertDocuments(into context: ModelContext, petID: UUID,
+                                        rabies: HealthEventModel, days: (Int) -> Date) {
+        let storage = LocalFileStorage()
+
+        let certificateLines = [
+            "RIVERSIDE ANIMAL CLINIC", "Vaccination certificate", "",
+            "Patient: MOCHI   Species: Canine   Breed: Shiba Inu",
+            "Rabies - Nobivac 1yr      given 17/12/25",
+            "Next due 17/12/26", "", "Dr. Lan Pham",
+        ]
+        if let path = try? storage.saveFile(data: makePDF(lines: certificateLines),
+                                            fileName: "rabies-certificate.pdf", subdirectory: "documents") {
+            let certificate = DocumentModel(petId: petID, filePath: path, originalFileName: "rabies-certificate.pdf",
+                                            title: "Rabies certificate", mimeType: "application/pdf",
+                                            documentType: DocumentType.vaccinationCertificate.rawValue,
+                                            ocrText: certificateLines.joined(separator: "\n"), pageCount: 1,
+                                            processingStatus: ProcessingStatus.reviewed.rawValue,
+                                            createdAt: days(-340))
+            context.insert(certificate)
+            rabies.sourceDocumentId = certificate.id
+        }
+
+        let reportLines = [
+            "RIVERSIDE ANIMAL CLINIC", "Consultation report", "",
+            "Patient: MOCHI    Date: 08/11/2026", "Wt 10.2kg",
+            "Dx: mild atopic dermatitis",
+            "Rx: Apoquel 5.4mg tab - 1 tab SID with food x 30d",
+            "DHPPi booster given", "Recheck 4 wks  next due 11/12/27",
+        ]
+        guard let path = try? storage.saveFile(data: makePDF(lines: reportLines),
+                                               fileName: "checkup-report.pdf", subdirectory: "documents") else { return }
+        let report = DocumentModel(petId: petID, filePath: path, originalFileName: "checkup-report.pdf",
+                                   title: "Check-up report", mimeType: "application/pdf",
+                                   documentType: DocumentType.veterinaryVisitReport.rawValue,
+                                   ocrText: reportLines.joined(separator: "\n"), pageCount: 1,
+                                   processingStatus: ProcessingStatus.extracted.rawValue,
+                                   createdAt: days(-1))
+        context.insert(report)
+
+        typealias Key = ExtractionFieldKey
+        let fields: [(Key, String?, String, String, Bool, String?)] = [
+            (.documentType, DocumentType.veterinaryVisitReport.rawValue, "Consultation report", "high", false, nil),
+            (.petName, "Mochi", "Patient: MOCHI", "high", false, nil),
+            (.clinic, "Riverside Animal Clinic", "RIVERSIDE ANIMAL CLINIC", "high", false, nil),
+            (.visitDate, "2026-11-08", "Date: 08/11/2026", "high", false, nil),
+            (.weight, "10.2 kg", "Wt 10.2kg", "high", false, nil),
+            (.diagnosisText, "Mild atopic dermatitis", "Dx: mild atopic dermatitis", "medium", false, "diagnosis-0"),
+            (.medicationName, "Apoquel 5.4mg", "Apoquel 5.4mg tab", "high", false, "medication-0"),
+            (.dosageText, "1 tab", "1 tab", "high", false, "medication-0"),
+            (.frequencyText, "SID with food", "SID with food", "low", true, "medication-0"),
+            (.vaccineName, "DHPPi", "DHPPi booster given", "medium", false, "vaccination-0"),
+            (.nextDueDate, nil, "next due 11/12/27", "low", true, "vaccination-0"),
+        ]
+        for (order, field) in fields.enumerated() {
+            context.insert(ExtractedFieldModel(documentId: report.id, fieldName: field.0.rawValue,
+                                               fieldValue: field.1, sourceText: field.2, pageNumber: 1,
+                                               confidence: field.3, isAmbiguous: field.4,
+                                               groupKey: field.5, sortOrder: order))
+        }
+    }
+
+    /// A one-page A4 PDF with the given lines, drawn with CoreGraphics/CoreText (works on iOS and macOS).
+    private static func makePDF(lines: [String]) -> Data {
+        let data = NSMutableData()
+        var mediaBox = CGRect(x: 0, y: 0, width: 595, height: 842)
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
+              let pdf = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else { return Data() }
+        pdf.beginPDFPage(nil)
+        pdf.setFillColor(CGColor(gray: 0.95, alpha: 1))
+        pdf.fill(CGRect(x: 40, y: 742, width: 515, height: 60))
+        var y: CGFloat = 770
+        for (index, line) in lines.enumerated() {
+            let font = CTFontCreateWithName((index == 0 ? "Helvetica-Bold" : "Helvetica") as CFString,
+                                            index == 0 ? 18 : 13, nil)
+            let attributed = NSAttributedString(string: line, attributes: [
+                NSAttributedString.Key(kCTFontAttributeName as String): font,
+            ])
+            let ctLine = CTLineCreateWithAttributedString(attributed)
+            pdf.textPosition = CGPoint(x: 56, y: y)
+            CTLineDraw(ctLine, pdf)
+            y -= index == 0 ? 40 : 24
+        }
+        pdf.endPDFPage()
+        pdf.closePDF()
+        return data as Data
     }
 }

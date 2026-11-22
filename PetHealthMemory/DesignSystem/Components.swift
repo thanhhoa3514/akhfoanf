@@ -35,8 +35,9 @@ struct PrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.headline)
             .foregroundStyle(AppTheme.Colors.onBrandPrimary)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .padding(.horizontal, AppTheme.Spacing.lg)
+            .padding(.horizontal, AppTheme.Spacing.md)
             .background(
                 AppTheme.Colors.brandPrimary.opacity(isEnabled ? 1 : 0.4),
                 in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
@@ -52,8 +53,9 @@ struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.headline)
             .foregroundStyle(AppTheme.Colors.brandText)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .padding(.horizontal, AppTheme.Spacing.lg)
+            .padding(.horizontal, AppTheme.Spacing.md)
             .background(AppTheme.Colors.brandPrimarySoft, in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous))
             .opacity(configuration.isPressed ? 0.8 : 1)
     }

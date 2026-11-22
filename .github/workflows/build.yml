@@ -89,6 +89,14 @@ jobs:
           xcrun simctl list devices available | grep "$udid"
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare simulator
+        run: |
+          xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
+          # Skip the one-time keyboard tips that would cover the screenshots.
+          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true
+          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" defaults write com.apple.keyboard.preferences DidShowGestureKeyboardIntroduction -bool true
+          xcrun simctl status_bar "${{ steps.sim.outputs.udid }}" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
+
       - name: Run UI tests
         run: |
           set -o pipefail

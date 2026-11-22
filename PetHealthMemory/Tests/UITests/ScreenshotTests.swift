@@ -38,6 +38,19 @@ final class ScreenshotTests: XCTestCase {
         open(app, tab: "Documents")
         snapshot(app, "\(scheme)-04-documents")
 
+        if tapIfExists(app.staticTexts["Rabies certificate"].firstMatch) {
+            snapshot(app, "\(scheme)-04b-document-detail")
+            goBack(app)
+        }
+
+        if tapIfExists(app.staticTexts["Check-up report"].firstMatch) {
+            if tapIfExists(app.buttons["Review"].firstMatch) {
+                snapshot(app, "\(scheme)-04c-review")
+                tapIfExists(app.buttons["Later"].firstMatch)
+            }
+            goBack(app)
+        }
+
         open(app, tab: "Reminders")
         snapshot(app, "\(scheme)-05-reminders")
 
