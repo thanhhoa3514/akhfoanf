@@ -45,9 +45,36 @@ enum Thumbnailer {
     nonisolated static func thumbnail(for url: URL, mimeType: String, size: CGSize = CGSize(width: 160, height: 200)) -> PlatformImage? {
         if mimeType == "application/pdf" {
             guard let page = PDFDocument(url: url)?.page(at: 0) else { return nil }
-            return page.thumbnail(of: size, for: .mediaBox)
+            return topOfPage(page, size: size) ?? page.thumbnail(of: size, for: .mediaBox)
         }
         return PlatformImage(contentsOfFile: url.path)
+    }
+
+    /// Renders the top-left part of a page, zoomed, so a 56pt thumbnail shows the letterhead and
+    /// title instead of a near-blank miniature of a whole A4 sheet.
+    nonisolated private static func topOfPage(_ page: PDFPage, size: CGSize, zoom: CGFloat = 1.8) -> PlatformImage? {
+        let box = page.bounds(for: .mediaBox)
+        guard box.width > 0, size.width > 0, size.height > 0 else { return nil }
+        let regionWidth = box.width / zoom
+        let regionHeight = regionWidth * size.height / size.width
+        let region = CGRect(x: box.minX, y: box.maxY - regionHeight, width: regionWidth, height: regionHeight)
+
+        let width = Int(size.width), height = Int(size.height)
+        guard let ctx = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                  space: CGColorSpaceCreateDeviceRGB(),
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+        ctx.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        let scale = size.width / region.width
+        ctx.scaleBy(x: scale, y: scale)
+        ctx.translateBy(x: -region.minX, y: -region.minY)
+        page.draw(with: .mediaBox, to: ctx)
+        guard let cgImage = ctx.makeImage() else { return nil }
+        #if canImport(UIKit)
+        return UIImage(cgImage: cgImage)
+        #else
+        return NSImage(cgImage: cgImage, size: NSSize(width: size.width / 2, height: size.height / 2))
+        #endif
     }
 }
 

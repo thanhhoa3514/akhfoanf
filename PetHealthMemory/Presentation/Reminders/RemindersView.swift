@@ -170,7 +170,7 @@ struct ReminderRow: View {
                     .strikethrough(isDone, color: AppTheme.Colors.textSecondary)
                     .foregroundStyle(isDone ? AppTheme.Colors.textSecondary : AppTheme.Colors.textPrimary)
                 HStack(spacing: AppTheme.Spacing.xs) {
-                    DueBadge(date: reminder.dueDate, isCompleted: isDone)
+                    DueBadge(date: reminder.dueDate, isCompleted: isDone, soonWindow: reminder.soonWindow)
                     if reminder.recurrence != .none {
                         Label(reminder.recurrence.title, systemImage: "repeat")
                             .font(.caption)

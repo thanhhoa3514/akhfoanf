@@ -180,7 +180,7 @@ struct HealthEventDetailView: View {
                     HStack {
                         Label(reminder.title, systemImage: reminder.type.symbol)
                         Spacer()
-                        DueBadge(date: reminder.dueDate, isCompleted: reminder.state == .completed)
+                        DueBadge(date: reminder.dueDate, isCompleted: reminder.state == .completed, soonWindow: reminder.soonWindow)
                     }
                     .frame(minHeight: AppTheme.Size.minTouch)
                 }

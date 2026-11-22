@@ -186,7 +186,8 @@ struct TimelineRow: View {
                         )
                     }
                     if let due = event.nextDueDate {
-                        DueBadge(date: due)
+                        DueBadge(date: due, soonWindow: event.eventType == .vaccination
+                                 ? DueState.vaccineSoonWindow : DueState.defaultSoonWindow)
                     }
                     if let sourceTitle {
                         SourceBadge(title: sourceTitle)

@@ -30,8 +30,10 @@ struct HomeView: View {
 
     private var pet: PetModel? { pets.first }
     private var dueSoon: [ReminderModel] {
-        let horizon = Calendar.current.date(byAdding: .day, value: 7, to: .now) ?? .now
-        return reminders.filter { $0.isOpen && $0.dueDate <= horizon }
+        reminders.filter { reminder in
+            let horizon = Calendar.current.date(byAdding: .day, value: reminder.soonWindow, to: .now) ?? .now
+            return reminder.isOpen && reminder.dueDate <= horizon
+        }
     }
     private var docsToReview: [DocumentModel] { documents.filter { $0.status.needsReview } }
     private var failedDocs: [DocumentModel] { documents.filter { $0.status == .failed } }
@@ -260,10 +262,11 @@ struct HomeView: View {
                     }
                     ForEach(dueSoon.prefix(4)) { reminder in
                         attentionRow(
-                            icon: reminder.type.symbol, tint: DueState(date: reminder.dueDate).fill,
+                            icon: reminder.type.symbol,
+                            tint: DueState(date: reminder.dueDate, soonWindow: reminder.soonWindow).fill,
                             title: reminder.title,
                             subtitle: nil,
-                            badge: AnyView(DueBadge(date: reminder.dueDate))
+                            badge: AnyView(DueBadge(date: reminder.dueDate, soonWindow: reminder.soonWindow))
                         ) { appState.sheet = .editReminder(reminder.id) }
                     }
                 }

@@ -55,6 +55,24 @@ struct SearchView: View {
         }
     }
 
+    private struct Suggestion { let text: String; let symbol: String }
+
+    /// Quick starts built from the user's own data: recent vaccines and medications, then clinics.
+    private var suggestions: [Suggestion] {
+        var seen = Set<String>()
+        var result: [Suggestion] = []
+        func add(_ text: String?, _ symbol: String) {
+            guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty,
+                  seen.insert(text.lowercased()).inserted, result.count < 6 else { return }
+            result.append(Suggestion(text: text, symbol: symbol))
+        }
+        for event in events where event.eventType == .vaccination || event.eventType == .medication {
+            add(event.title, event.eventType.symbol)
+        }
+        for event in events { add(event.providerName, "building.2") }
+        return result
+    }
+
     var body: some View {
         @Bindable var appState = appState
         RouteList {
@@ -65,6 +83,16 @@ struct SearchView: View {
                     Text("Try a vaccine, medication, clinic, or words from inside a scanned document. Works offline.")
                 }
                 .listRowBackground(Color.clear)
+                if !suggestions.isEmpty {
+                    Section("Suggestions") {
+                        ForEach(suggestions, id: \.text) { suggestion in
+                            Button { query = suggestion.text } label: {
+                                Label(suggestion.text, systemImage: suggestion.symbol)
+                                    .foregroundStyle(AppTheme.Colors.textPrimary)
+                            }
+                        }
+                    }
+                }
             } else if matchingPets.isEmpty && matchingEvents.isEmpty && matchingDocuments.isEmpty {
                 ContentUnavailableView.search(text: trimmed)
                     .listRowBackground(Color.clear)

@@ -40,12 +40,12 @@ struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(Self.font)
-            .foregroundStyle(AppTheme.Colors.onBrandPrimary)
+            .foregroundStyle(isEnabled ? AppTheme.Colors.onBrandPrimary : AppTheme.Colors.textSecondary)
             .lineLimit(1)
             .frame(maxWidth: .infinity, minHeight: AppTheme.Size.button)
             .padding(.horizontal, AppTheme.Spacing.md)
             .background(
-                AppTheme.Colors.brandPrimary.opacity(isEnabled ? 1 : 0.4),
+                isEnabled ? AppTheme.Colors.brandPrimary : AppTheme.Colors.bgElevated,
                 in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
             )
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -146,9 +146,11 @@ struct NeedsCheckBadge: View {
 struct DueBadge: View {
     let date: Date
     var isCompleted = false
+    /// Days ahead that count as "due soon". Vaccines get a longer runway (book the vet).
+    var soonWindow = DueState.defaultSoonWindow
 
     var body: some View {
-        let state = DueState(date: date, isCompleted: isCompleted)
+        let state = DueState(date: date, isCompleted: isCompleted, soonWindow: soonWindow)
         Pill(text: state.label, systemImage: state.symbol, tint: state.fill, textColor: state.text)
     }
 }
@@ -160,7 +162,10 @@ struct DueState {
     let fill: Color
     let text: Color
 
-    init(date: Date, isCompleted: Bool = false, now: Date = .now) {
+    static let defaultSoonWindow = 7
+    static let vaccineSoonWindow = 30
+
+    init(date: Date, isCompleted: Bool = false, soonWindow: Int = DueState.defaultSoonWindow, now: Date = .now) {
         let calendar = Calendar.current
         let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: date)).day ?? 0
         if isCompleted {
@@ -170,11 +175,12 @@ struct DueState {
             symbol = "exclamationmark.circle.fill"; fill = AppTheme.Colors.statusDanger; text = AppTheme.Colors.dangerText
         } else if days == 0 {
             label = "Today"; symbol = "clock.fill"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
-        } else if days <= 7 {
-            label = days == 1 ? "Tomorrow" : "In \(days) days"
+        } else if days <= soonWindow {
+            label = days == 1 ? "Due tomorrow" : "Due in \(days) days"
             symbol = "clock"; fill = AppTheme.Colors.statusWarning; text = AppTheme.Colors.warningText
         } else {
-            label = date.formatted(.dateTime.day().month(.abbreviated).year())
+            // Always say what the date means — a bare date chip was ambiguous (given? due?).
+            label = "Due " + date.formatted(.dateTime.day().month(.abbreviated).year())
             symbol = "calendar"; fill = AppTheme.Colors.textSecondary; text = AppTheme.Colors.textSecondary
         }
     }

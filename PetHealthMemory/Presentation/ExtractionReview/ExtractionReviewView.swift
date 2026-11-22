@@ -120,24 +120,28 @@ struct ExtractionReviewView: View {
     @ViewBuilder
     private func reviewLayout(_ document: DocumentModel) -> some View {
         if isCompact {
-            ScrollView {
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
-                    documentStrip(document)
-                    fieldsColumn(document)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
+                        documentStrip(document)
+                        fieldsColumn(document)
+                    }
+                    .padding(AppTheme.Spacing.lg)
                 }
-                .padding(AppTheme.Spacing.lg)
+                .safeAreaInset(edge: .bottom) { saveBar(document, proxy: proxy) }
             }
-            .safeAreaInset(edge: .bottom) { saveBar(document) }
         } else {
             HStack(spacing: 0) {
                 SourcePane(document: document, highlight: highlight, pane: $leftPane)
                     .frame(minWidth: 320, maxWidth: .infinity)
                 Divider()
-                ScrollView {
-                    fieldsColumn(document).padding(AppTheme.Spacing.lg)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        fieldsColumn(document).padding(AppTheme.Spacing.lg)
+                    }
+                    .safeAreaInset(edge: .bottom) { saveBar(document, proxy: proxy) }
                 }
                 .frame(minWidth: 360, idealWidth: 440, maxWidth: 560)
-                .safeAreaInset(edge: .bottom) { saveBar(document) }
             }
         }
     }
@@ -176,6 +180,7 @@ struct ExtractionReviewView: View {
                         if isCompact { showOriginal = true }
                     }
                 )
+                .id(record.id)
                 .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .bottom)), removal: .opacity.combined(with: .scale(scale: 0.92))))
             }
             Menu {
@@ -239,8 +244,16 @@ struct ExtractionReviewView: View {
 
     private var documentCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            Picker("Document type", selection: $model.documentType) {
-                ForEach(DocumentType.allCases, id: \.self) { Text($0.title).tag($0) }
+            HStack {
+                Text("Document type")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
+                Spacer()
+                Picker("Document type", selection: $model.documentType) {
+                    ForEach(DocumentType.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
             }
             ForEach(model.documentFields) { field in
                 if field.key == .petName, let pet, !field.value.isEmpty,
@@ -257,7 +270,12 @@ struct ExtractionReviewView: View {
         .card()
     }
 
-    private func saveBar(_ document: DocumentModel) -> some View {
+    /// First included record that still has something to resolve.
+    private var nextRecordToCheck: ReviewRecord? {
+        model.records.first { $0.included && !model.issues(for: $0).isEmpty }
+    }
+
+    private func saveBar(_ document: DocumentModel, proxy: ScrollViewProxy) -> some View {
         VStack(spacing: AppTheme.Spacing.xs) {
             Button {
                 do {
@@ -273,6 +291,18 @@ struct ExtractionReviewView: View {
             .disabled(!model.canSave)
             .keyboardShortcut(.defaultAction)
             if !model.canSave && !model.includedRecords.isEmpty {
+                if let next = nextRecordToCheck {
+                    Button {
+                        withAnimation(AppTheme.Motion.animation(AppTheme.Motion.standard, reduceMotion: reduceMotion)) {
+                            proxy.scrollTo(next.id, anchor: .top)
+                        }
+                    } label: {
+                        Label("Show next item to check", systemImage: "arrow.down.circle")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppTheme.Colors.warningText)
+                }
                 Text("Resolve the items marked in each record, or untick records you don't want.")
                     .font(.caption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
@@ -457,7 +487,7 @@ private struct FieldRow: View {
         }
         .padding(AppTheme.Spacing.md)
         .background(
-            (field.needsCheck ? AppTheme.Colors.statusWarning.opacity(0.10) : AppTheme.Colors.bgElevated),
+            (field.needsCheck ? AppTheme.Colors.statusWarning.opacity(0.10) : Color.clear),
             in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
         )
         .overlay(
