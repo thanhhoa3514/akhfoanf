@@ -38,14 +38,8 @@ struct SettingsView: View {
             }
 
             Section("Privacy") {
-                LabeledContent("Text recognition") { Label("On this device", systemImage: "checkmark.shield").foregroundStyle(AppTheme.Colors.successText) }
-                LabeledContent("Detail extraction") {
-                    if container.extractionService.isAvailableOnDevice {
-                        Label("On this device", systemImage: "checkmark.shield").foregroundStyle(AppTheme.Colors.successText)
-                    } else {
-                        Text("Not available — manual entry").foregroundStyle(AppTheme.Colors.textSecondary)
-                    }
-                }
+                privacyRow("Text recognition", onDevice: true)
+                privacyRow("Detail extraction", onDevice: container.extractionService.isAvailableOnDevice)
                 LabeledContent("Analytics & tracking", value: String(localized: "None"))
             }
 
@@ -114,6 +108,22 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Consider exporting your data first.")
+        }
+    }
+
+    /// One explicit row (a conditional inside LabeledContent laid out as a tall, mostly empty cell).
+    private func privacyRow(_ title: LocalizedStringKey, onDevice: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.md) {
+            Text(title)
+            Spacer(minLength: AppTheme.Spacing.sm)
+            if onDevice {
+                Label("On this device", systemImage: "checkmark.shield")
+                    .foregroundStyle(AppTheme.Colors.successText)
+            } else {
+                Text("Not available — manual entry")
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
+            }
         }
     }
 

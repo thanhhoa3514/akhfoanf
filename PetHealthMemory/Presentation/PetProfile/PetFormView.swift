@@ -77,7 +77,10 @@ struct PetFormView: View {
                 if species == "Other" {
                     TextField("Species", text: $customSpecies)
                 }
-                TextField("Breed (optional)", text: $breed)
+                // Labelled rows: a filled-in field has no placeholder left to say what it is.
+                LabeledContent("Breed") {
+                    TextField("Optional", text: $breed).multilineTextAlignment(.trailing)
+                }
             }
 
             Section("Details — all optional") {
@@ -93,10 +96,13 @@ struct PetFormView: View {
                     Text("lb").tag(WeightUnit.lb)
                 }
                 .pickerStyle(.segmented)
-                TextField("Microchip number", text: $microchip)
-                    #if os(iOS)
-                    .keyboardType(.asciiCapable)
-                    #endif
+                LabeledContent("Microchip") {
+                    TextField("Optional", text: $microchip)
+                        .multilineTextAlignment(.trailing)
+                        #if os(iOS)
+                        .keyboardType(.asciiCapable)
+                        #endif
+                }
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(2...5)
             }

@@ -9592,6 +9592,28 @@
           }
         }
       }
+    },
+    "Breed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rasse"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Race"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "品種"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
