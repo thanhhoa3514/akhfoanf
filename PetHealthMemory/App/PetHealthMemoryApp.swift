@@ -24,7 +24,7 @@ struct PetHealthMemoryApp: App {
         .modelContainer(modelContainer)
         .commands { AppCommands(appState: appState) }
         #if os(macOS)
-        .defaultSize(width: 1180, height: 760)
+        .defaultSize(width: 1280, height: 820)
         #endif
 
         #if os(macOS)

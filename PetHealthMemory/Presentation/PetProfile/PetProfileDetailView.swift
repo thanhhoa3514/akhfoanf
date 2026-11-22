@@ -6,6 +6,7 @@ import SwiftUI
 struct PetProfileDetailView: View {
     let petID: UUID
 
+    @Environment(\.isCompactLayout) private var isCompact
     @Environment(\.modelContext) private var context
     @Environment(AppState.self) private var appState
     @Environment(AppContainer.self) private var container
@@ -34,14 +35,15 @@ struct PetProfileDetailView: View {
                         }
                         .card()
                     }
-                    Button(role: .destructive) {
-                        footprint = DataCleanup.footprint(of: petID, in: context)
-                        confirmDelete = true
-                    } label: {
-                        Label("Delete \(pet.name)'s profile", systemImage: "trash")
-                            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.minTouch)
+                    // iPhone: at the end of the profile. Wide layouts: in the toolbar's "…" menu,
+                    // so a destructive action never sits in the always-visible Home detail column.
+                    if isCompact {
+                        Button(role: .destructive, action: requestDelete) {
+                            Label("Delete \(pet.name)'s profile", systemImage: "trash")
+                                .frame(maxWidth: .infinity, minHeight: AppTheme.Size.minTouch)
+                        }
+                        .foregroundStyle(AppTheme.Colors.dangerText)
                     }
-                    .foregroundStyle(AppTheme.Colors.dangerText)
                 }
                 .padding(AppTheme.Spacing.lg)
                 .frame(maxWidth: 720)
@@ -54,6 +56,15 @@ struct PetProfileDetailView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Edit") { appState.sheet = .editPet(petID) }
                 }
+                if !isCompact {
+                    ToolbarItem(placement: .primaryAction) {
+                        Menu {
+                            Button("Delete \(pet.name)'s Profile…", systemImage: "trash", role: .destructive, action: requestDelete)
+                        } label: {
+                            Label("More", systemImage: "ellipsis.circle")
+                        }
+                    }
+                }
             }
             .confirmationDialog("Delete \(pet.name)?", isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button("Delete profile and all data", role: .destructive) {
@@ -65,6 +76,11 @@ struct PetProfileDetailView: View {
         } else {
             ContentUnavailableView("Pet not found", systemImage: "pawprint")
         }
+    }
+
+    private func requestDelete() {
+        footprint = DataCleanup.footprint(of: petID, in: context)
+        confirmDelete = true
     }
 
     private func header(_ pet: PetModel) -> some View {

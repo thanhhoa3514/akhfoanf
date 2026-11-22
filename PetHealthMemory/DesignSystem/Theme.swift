@@ -55,15 +55,29 @@ enum AppTheme {
         static let xxxl: CGFloat = 32
     }
 
+    /// macOS uses tighter radii and control heights: it's a pointer UI, not a touch UI.
     enum Radius {
+        #if os(macOS)
+        static let chip: CGFloat = 6
+        static let input: CGFloat = 8
+        static let card: CGFloat = 10
+        static let sheet: CGFloat = 12
+        #else
         static let chip: CGFloat = 10
         static let input: CGFloat = 12
         static let card: CGFloat = 16
         static let sheet: CGFloat = 20
+        #endif
     }
 
     enum Size {
         static let minTouch: CGFloat = 44
+        /// Height of primary/secondary buttons.
+        #if os(macOS)
+        static let button: CGFloat = 32
+        #else
+        static let button: CGFloat = 50
+        #endif
         static let rowIcon: CGFloat = 36
         static let thumbnail: CGFloat = 56
     }

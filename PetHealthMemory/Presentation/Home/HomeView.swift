@@ -46,8 +46,12 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.xxl) {
-                header
-                captureCard
+                if isCompact {
+                    header
+                    captureCard
+                } else {
+                    compactCaptureRow
+                }
                 if isBrandNew {
                     firstRunGuide
                 } else {
@@ -155,6 +159,26 @@ struct HomeView: View {
                 .labelStyle(TileLabelStyle())
         }
         .card()
+    }
+
+    /// Wide layouts (Mac, iPad): one quiet row instead of the big iPhone capture card.
+    private var compactCaptureRow: some View {
+        HStack(spacing: AppTheme.Spacing.md) {
+            Image(systemName: "doc.viewfinder")
+                .font(.title3)
+                .foregroundStyle(AppTheme.Colors.brandText)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Add a vet document").font(.headline)
+                Text("Drop a PDF or photo anywhere in Documents, or press ⌘I. Everything is read on this device.")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.Colors.textSecondary)
+            }
+            Spacer(minLength: AppTheme.Spacing.md)
+            Button("Import…") { appState.sheet = .capture(source: nil) }
+                .buttonStyle(.borderedProminent)
+        }
+        .card(padding: AppTheme.Spacing.md)
+        .padding(.top, AppTheme.Spacing.lg)
     }
 
     @ViewBuilder

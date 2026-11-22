@@ -61,14 +61,14 @@ final class ScreenshotTests: XCTestCase {
         #else
         // macOS: three-column split view. Sidebar section → content list → detail.
         openSection(app, "Health History")
-        tapIfExists(app.staticTexts["Rabies"].firstMatch)
+        selectRow(app, "Rabies")
         snapshot(app, "\(scheme)-02-history")
 
         openSection(app, "Documents")
-        tapIfExists(app.staticTexts["Rabies certificate"].firstMatch)
+        selectRow(app, "Rabies certificate")
         snapshot(app, "\(scheme)-04-documents")
 
-        if tapIfExists(app.staticTexts["Check-up report"].firstMatch) {
+        if selectRow(app, "Check-up report") {
             snapshot(app, "\(scheme)-04b-document-to-review")
             if tapIfExists(app.buttons["Review"].firstMatch) {
                 snapshot(app, "\(scheme)-04c-review")
@@ -122,6 +122,17 @@ final class ScreenshotTests: XCTestCase {
         if !tapIfExists(sidebarRow, timeout: 3), !tapIfExists(app.staticTexts[title].firstMatch) {
             XCTFail("Sidebar section '\(title)' not found")
         }
+    }
+
+    /// Clicks the list row (cell) that contains `title`, falling back to the text itself.
+    @discardableResult
+    private func selectRow(_ app: XCUIApplication, _ title: String) -> Bool {
+        let cell = app.cells.containing(.staticText, identifier: title).firstMatch
+        if cell.waitForExistence(timeout: 3) {
+            cell.click()
+            return true
+        }
+        return tapIfExists(app.staticTexts[title].firstMatch)
     }
     #endif
 

@@ -31,12 +31,18 @@ extension View {
 struct PrimaryButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
+    #if os(macOS)
+    static let font = Font.body.weight(.semibold)
+    #else
+    static let font = Font.headline
+    #endif
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline)
+            .font(Self.font)
             .foregroundStyle(AppTheme.Colors.onBrandPrimary)
             .lineLimit(1)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.button)
             .padding(.horizontal, AppTheme.Spacing.md)
             .background(
                 AppTheme.Colors.brandPrimary.opacity(isEnabled ? 1 : 0.4),
@@ -51,10 +57,10 @@ struct PrimaryButtonStyle: ButtonStyle {
 struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline)
+            .font(PrimaryButtonStyle.font)
             .foregroundStyle(AppTheme.Colors.brandText)
             .lineLimit(1)
-            .frame(maxWidth: .infinity, minHeight: 50)
+            .frame(maxWidth: .infinity, minHeight: AppTheme.Size.button)
             .padding(.horizontal, AppTheme.Spacing.md)
             .background(AppTheme.Colors.brandPrimarySoft, in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous))
             .opacity(configuration.isPressed ? 0.8 : 1)

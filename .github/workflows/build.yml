@@ -107,6 +107,28 @@ jobs:
       - name: Prepare macOS destination
         if: matrix.platform == 'macos'
         run: |
+          # The runner's display defaults to 1024x768 at 1x, which makes screenshots blurry
+          # and squeezes the 3-column window. Switch to the largest HiDPI (scaling:on) mode
+          # if the virtual display offers one, otherwise the largest mode.
+          brew install jakehilborn/jakehilborn/displayplacer || true
+          if command -v displayplacer >/dev/null; then
+            displayplacer list | tee displays.txt | grep -E "mode [0-9]+:" | head -40 || true
+            python3 - <<'PY' > display_cmd.txt || true
+          import re
+          text = open("displays.txt").read()
+          sid = re.search(r"Persistent screen id: (\S+)", text).group(1)
+          modes = [(int(m.group(1)), int(m.group(2)), int(m.group(3)), "scaling:on" in m.group(0))
+                   for m in re.finditer(r"mode (\d+): res:(\d+)x(\d+)[^\n]*", text)]
+          hidpi = [m for m in modes if m[3] and m[1] >= 1280]
+          pick = max(hidpi or modes, key=lambda m: (m[1] * m[2]) if not hidpi else -abs(m[1] - 1440))
+          print(f"id:{sid} mode:{pick[0]}")
+          PY
+            echo "Switching display: $(cat display_cmd.txt)"
+            displayplacer "$(cat display_cmd.txt)" || true
+            sleep 3
+            displayplacer list | grep -E "current mode" || true
+          fi
+
           echo "DESTINATION=platform=macOS" >> "$GITHUB_ENV"
           # macOS UI tests need a signed runner: ad-hoc sign, no team, no hardened runtime.
           echo "SIGNING=CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= ENABLE_HARDENED_RUNTIME=NO" >> "$GITHUB_ENV"
