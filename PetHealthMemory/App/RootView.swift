@@ -260,7 +260,20 @@ struct SheetRouter: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 520, idealWidth: 620, minHeight: 560, idealHeight: 680)
+        .frame(minWidth: macSize.width, idealWidth: macSize.width,
+               minHeight: macSize.height, idealHeight: macSize.height)
         #endif
     }
+
+    #if os(macOS)
+    /// Review shows the original next to the fields, so it (and capture, which flows into it)
+    /// needs a wide sheet; forms stay compact.
+    private var macSize: CGSize {
+        switch sheet {
+        case .review, .capture: CGSize(width: 1040, height: 720)
+        case .export: CGSize(width: 760, height: 680)
+        default: CGSize(width: 560, height: 620)
+        }
+    }
+    #endif
 }
