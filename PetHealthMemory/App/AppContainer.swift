@@ -11,17 +11,19 @@ final class AppContainer {
     let notificationService: ReminderNotificationServiceProtocol
     let pdfService: PDFReportServiceProtocol
 
+    // Defaults are built in the body: default-argument expressions are evaluated in a
+    // nonisolated context and can't call the @MainActor PDFReportService initializer.
     init(
-        fileStorage: LocalFileStorageProtocol = LocalFileStorage(),
-        ocrService: VisionOCRServiceProtocol = VisionOCRService(),
-        extractionService: ExtractionServiceProtocol = FoundationModelExtractionService(),
-        notificationService: ReminderNotificationServiceProtocol = ReminderNotificationService(),
-        pdfService: PDFReportServiceProtocol = PDFReportService()
+        fileStorage: LocalFileStorageProtocol? = nil,
+        ocrService: VisionOCRServiceProtocol? = nil,
+        extractionService: ExtractionServiceProtocol? = nil,
+        notificationService: ReminderNotificationServiceProtocol? = nil,
+        pdfService: PDFReportServiceProtocol? = nil
     ) {
-        self.fileStorage = fileStorage
-        self.ocrService = ocrService
-        self.extractionService = extractionService
-        self.notificationService = notificationService
-        self.pdfService = pdfService
+        self.fileStorage = fileStorage ?? LocalFileStorage()
+        self.ocrService = ocrService ?? VisionOCRService()
+        self.extractionService = extractionService ?? FoundationModelExtractionService()
+        self.notificationService = notificationService ?? ReminderNotificationService()
+        self.pdfService = pdfService ?? PDFReportService()
     }
 }

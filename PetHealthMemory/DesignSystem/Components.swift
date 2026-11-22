@@ -35,8 +35,9 @@ struct PrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.headline)
             .foregroundStyle(AppTheme.Colors.onBrandPrimary)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .padding(.horizontal, AppTheme.Spacing.lg)
+            .padding(.horizontal, AppTheme.Spacing.md)
             .background(
                 AppTheme.Colors.brandPrimary.opacity(isEnabled ? 1 : 0.4),
                 in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous)
@@ -52,10 +53,25 @@ struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.headline)
             .foregroundStyle(AppTheme.Colors.brandText)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .padding(.horizontal, AppTheme.Spacing.lg)
+            .padding(.horizontal, AppTheme.Spacing.md)
             .background(AppTheme.Colors.brandPrimarySoft, in: RoundedRectangle(cornerRadius: AppTheme.Radius.input, style: .continuous))
             .opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+/// Icon above a single-line title, for equal-width action tiles (Home capture card).
+struct TileLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: AppTheme.Spacing.xs) {
+            configuration.icon.font(.title3)
+            configuration.title
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .padding(.vertical, AppTheme.Spacing.sm)
     }
 }
 

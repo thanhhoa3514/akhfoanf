@@ -41,7 +41,11 @@ struct TimelineView: View {
 
     init(petID: UUID) {
         self.petID = petID
-        _events = Query(filter: #Predicate<HealthEventModel> { $0.petId == petID }, sort: \.eventDate, order: .reverse)
+        _events = Query(
+            filter: #Predicate<HealthEventModel> { $0.petId == petID },
+            // createdAt breaks ties so same-day events keep a stable order.
+            sort: [SortDescriptor(\.eventDate, order: .reverse), SortDescriptor(\.createdAt, order: .reverse)]
+        )
         _documents = Query(filter: #Predicate<DocumentModel> { $0.petId == petID })
     }
 

@@ -19,7 +19,11 @@ struct HomeView: View {
     init(petID: UUID) {
         self.petID = petID
         _pets = Query(filter: #Predicate<PetModel> { $0.id == petID })
-        _events = Query(filter: #Predicate<HealthEventModel> { $0.petId == petID }, sort: \.eventDate, order: .reverse)
+        _events = Query(
+            filter: #Predicate<HealthEventModel> { $0.petId == petID },
+            // createdAt breaks ties so same-day events keep a stable order.
+            sort: [SortDescriptor(\.eventDate, order: .reverse), SortDescriptor(\.createdAt, order: .reverse)]
+        )
         _reminders = Query(filter: #Predicate<ReminderModel> { $0.petId == petID }, sort: \.dueDate)
         _documents = Query(filter: #Predicate<DocumentModel> { $0.petId == petID }, sort: \.createdAt, order: .reverse)
     }
@@ -145,25 +149,30 @@ struct HomeView: View {
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                 }
             }
-            HStack(spacing: AppTheme.Spacing.sm) {
-                #if os(iOS)
-                Button { appState.sheet = .capture(source: .camera) } label: {
-                    Label("Scan", systemImage: "camera.fill")
-                }
-                .buttonStyle(.primary)
-                #endif
-                Button { appState.sheet = .capture(source: .photos) } label: {
-                    Label("Photos", systemImage: "photo.on.rectangle")
-                }
-                .buttonStyle(.secondary)
-                Button { appState.sheet = .capture(source: .files) } label: {
-                    Label("Files", systemImage: "folder")
-                }
-                .buttonStyle(.secondary)
-            }
-            .labelStyle(.titleAndIcon)
+            // Icon-over-title tiles: three equal columns always fit an iPhone width
+            // (a horizontal icon + title row truncated "Photos" on 6.1" screens).
+            HStack(spacing: AppTheme.Spacing.sm) { captureButtons }
+                .labelStyle(TileLabelStyle())
         }
         .card()
+    }
+
+    @ViewBuilder
+    private var captureButtons: some View {
+        #if os(iOS)
+        Button { appState.sheet = .capture(source: .camera) } label: {
+            Label("Scan", systemImage: "camera.fill")
+        }
+        .buttonStyle(.primary)
+        #endif
+        Button { appState.sheet = .capture(source: .photos) } label: {
+            Label("Photos", systemImage: "photo.on.rectangle")
+        }
+        .buttonStyle(.secondary)
+        Button { appState.sheet = .capture(source: .files) } label: {
+            Label("Files", systemImage: "folder")
+        }
+        .buttonStyle(.secondary)
     }
 
     // MARK: First run

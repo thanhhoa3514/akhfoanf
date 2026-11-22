@@ -8,7 +8,9 @@ struct PetHealthMemoryApp: App {
     @State private var appState = AppState()
 
     init() {
-        self.modelContainer = ModelContainerFactory.makeContainer()
+        let modelContainer = ModelContainerFactory.makeContainer(inMemory: LaunchOptions.isUITesting)
+        LaunchOptions.prepare(modelContainer)
+        self.modelContainer = modelContainer
     }
 
     var body: some Scene {
@@ -17,6 +19,7 @@ struct PetHealthMemoryApp: App {
                 .environment(container)
                 .environment(appState)
                 .tint(AppTheme.Colors.brandPrimary)
+                .preferredColorScheme(LaunchOptions.colorScheme)
         }
         .modelContainer(modelContainer)
         .commands { AppCommands(appState: appState) }
