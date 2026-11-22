@@ -64,16 +64,15 @@ final class ScreenshotTests: XCTestCase {
         selectRow(app, "Rabies")
         snapshot(app, "\(scheme)-02-history")
 
+        // Wide layouts auto-select the first document: the report waiting for review.
         openSection(app, "Documents")
-        selectRow(app, "Rabies certificate")
         snapshot(app, "\(scheme)-04-documents")
-
-        if selectRow(app, "Check-up report") {
-            snapshot(app, "\(scheme)-04b-document-to-review")
-            if tapIfExists(app.buttons["Review"].firstMatch) {
-                snapshot(app, "\(scheme)-04c-review")
-                tapIfExists(app.buttons["Later"].firstMatch)
-            }
+        if tapIfExists(app.buttons["Review"].firstMatch) {
+            snapshot(app, "\(scheme)-04c-review")
+            tapIfExists(app.buttons["Later"].firstMatch)
+        }
+        if selectRow(app, "Rabies certificate") {
+            snapshot(app, "\(scheme)-04b-document-detail")
         }
 
         openSection(app, "Reminders")

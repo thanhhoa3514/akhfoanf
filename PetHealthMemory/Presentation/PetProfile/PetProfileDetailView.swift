@@ -127,6 +127,8 @@ struct PetProfileDetailView: View {
                 }
                 .chartXAxis(.hidden)
                 .chartYAxis(.hidden)
+                // Zoom to the data: a 9.8 → 10.4 kg change was a flat line on a 0-based axis.
+                .chartYScale(domain: .automatic(includesZero: false))
                 .frame(height: 56)
                 .accessibilityLabel("Weight trend")
             } else {

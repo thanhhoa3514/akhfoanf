@@ -69,7 +69,7 @@ struct TimelineView: View {
     }
 
     var body: some View {
-        RouteList {
+        RouteList(firstRoute: filtered.first.map { .event($0.id) }) {
             Section {
                 FilterPillBar(options: TimelineFilter.allCases, selection: $filter, title: \.title)
                     .listRowInsets(EdgeInsets())

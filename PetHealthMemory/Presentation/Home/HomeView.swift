@@ -171,7 +171,7 @@ struct HomeView: View {
                 .foregroundStyle(AppTheme.Colors.brandText)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Add a vet document").font(.headline)
-                Text("Drop a PDF or photo anywhere in Documents, or press ⌘I. Everything is read on this device.")
+                Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
                     .font(.subheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }

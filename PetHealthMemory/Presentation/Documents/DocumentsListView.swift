@@ -25,7 +25,7 @@ struct DocumentsListView: View {
     }
 
     var body: some View {
-        RouteList {
+        RouteList(firstRoute: (attention.first ?? archive.first).map { .document($0.id) }) {
             if documents.isEmpty {
                 ContentUnavailableView {
                     Label("No documents yet", systemImage: "doc.viewfinder")
