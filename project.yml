@@ -49,4 +49,22 @@ targets:
         "ENABLE_USER_SELECTED_FILES[sdk=macosx*]": readonly
         "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         CODE_SIGN_STYLE: Automatic
-    scheme: {}
+    scheme:
+      testTargets:
+        - PetHealthMemoryUITests
+
+  # End-to-end UI tests: launch the real app with `-ui-testing` and capture screenshots.
+  PetHealthMemoryUITests:
+    type: bundle.ui-testing
+    platform: auto
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: PetHealthMemory/Tests/UITests
+    dependencies:
+      - target: PetHealthMemory
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pethealthmemory.app.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: PetHealthMemory
+        CODE_SIGN_STYLE: Automatic

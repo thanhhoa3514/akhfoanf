@@ -28,3 +28,6 @@ xcuserdata/
 *.xcodeproj/
 DerivedData/
 build.log
+test.log
+*.xcresult
+snapshots/
