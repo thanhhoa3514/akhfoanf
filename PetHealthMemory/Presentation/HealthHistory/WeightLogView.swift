@@ -103,7 +103,7 @@ private struct WeightEntryForm: View {
             }
         }
         .formStyle(.grouped)
-        .navigationTitle(entry == nil ? "Add Weight" : "Edit Weight")
+        .navigationTitle(entry == nil ? String(localized: "Add Weight") : String(localized: "Edit Weight"))
         .inlineTitleOnPhone()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }

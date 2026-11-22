@@ -18,6 +18,12 @@ struct RemindersView: View {
     enum Scope: String, CaseIterable, Identifiable {
         case thisPet = "This pet", allPets = "All pets"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .thisPet: String(localized: "This pet")
+            case .allPets: String(localized: "All pets")
+            }
+        }
     }
 
     private var reminders: [ReminderModel] {
@@ -36,7 +42,7 @@ struct RemindersView: View {
         RouteList {
             if pets.count > 1 {
                 Picker("Show", selection: $scope) {
-                    ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(Scope.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -91,7 +97,7 @@ struct RemindersView: View {
     }
 
     @ViewBuilder
-    private func group(_ title: String, _ items: [ReminderModel]) -> some View {
+    private func group(_ title: LocalizedStringKey, _ items: [ReminderModel]) -> some View {
         if !items.isEmpty {
             Section(title) {
                 ForEach(items) { row($0) }
@@ -162,7 +168,7 @@ struct ReminderRow: View {
             }
             .buttonStyle(.plain)
             .sensoryFeedback(.success, trigger: isDone) { _, done in done }
-            .accessibilityLabel(isDone ? "Completed. Mark as not done" : "Mark as done")
+            .accessibilityLabel(isDone ? String(localized: "Completed. Mark as not done") : String(localized: "Mark as done"))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(reminder.title)

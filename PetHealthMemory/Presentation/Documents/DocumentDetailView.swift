@@ -117,7 +117,7 @@ struct DocumentDetailView: View {
             HStack(spacing: AppTheme.Spacing.md) {
                 Image(systemName: "questionmark.circle.fill").font(.title2).foregroundStyle(AppTheme.Colors.statusWarning)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(document.status == .extracted ? "Details are waiting for your review" : "Text is ready — add details")
+                    Text(document.status == .extracted ? String(localized: "Details are waiting for your review") : String(localized: "Text is ready — add details"))
                         .font(.appSubheadline.weight(.semibold))
                     Text("Nothing is added to the timeline until you confirm.").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
                 }
@@ -181,10 +181,10 @@ struct DocumentDetailView: View {
                 .fixedSize()
             }
             Divider()
-            InfoRow(label: "Imported", value: document.createdAt.formatted(date: .long, time: .omitted), systemImage: "calendar")
-            InfoRow(label: "Original file", value: document.originalFileName, systemImage: "doc")
+            InfoRow(label: String(localized: "Imported"), value: document.createdAt.formatted(date: .long, time: .omitted), systemImage: "calendar")
+            InfoRow(label: String(localized: "Original file"), value: document.originalFileName, systemImage: "doc")
             if let pages = document.pageCount {
-                InfoRow(label: "Pages", value: "\(pages)", systemImage: "doc.on.doc")
+                InfoRow(label: String(localized: "Pages"), value: "\(pages)", systemImage: "doc.on.doc")
             }
             Label("Stored privately on this device", systemImage: "lock.shield")
                 .font(.appCaption)

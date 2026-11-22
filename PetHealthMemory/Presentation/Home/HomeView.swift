@@ -164,20 +164,44 @@ struct HomeView: View {
     }
 
     /// Wide layouts (Mac, iPad): one quiet row instead of the big iPhone capture card.
+    private var captureIcon: some View {
+        Image(systemName: "doc.viewfinder")
+            .font(.title3)
+            .foregroundStyle(AppTheme.Colors.brandText)
+    }
+
+    private var captureText: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Add a vet document").font(.headline)
+            Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
+                .font(.appSubheadline)
+                .foregroundStyle(AppTheme.Colors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var importButton: some View {
+        Button("Import…") { appState.sheet = .capture(source: nil) }
+            .buttonStyle(.borderedProminent)
+    }
+
     private var compactCaptureRow: some View {
-        HStack(spacing: AppTheme.Spacing.md) {
-            Image(systemName: "doc.viewfinder")
-                .font(.title3)
-                .foregroundStyle(AppTheme.Colors.brandText)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Add a vet document").font(.headline)
-                Text("Drop a PDF or photo, or press ⌘I. Read on this device.")
-                    .font(.appSubheadline)
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
+        // Side by side when there is room; in a narrow column (or a long translation) the button
+        // moves under the text instead of squeezing it into a tall strip.
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: AppTheme.Spacing.md) {
+                captureIcon
+                captureText.frame(minWidth: 220, alignment: .leading)
+                Spacer(minLength: AppTheme.Spacing.md)
+                importButton
             }
-            Spacer(minLength: AppTheme.Spacing.md)
-            Button("Import…") { appState.sheet = .capture(source: nil) }
-                .buttonStyle(.borderedProminent)
+            VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
+                HStack(alignment: .top, spacing: AppTheme.Spacing.md) {
+                    captureIcon
+                    captureText
+                }
+                importButton
+            }
         }
         .card(padding: AppTheme.Spacing.md)
         .padding(.top, AppTheme.Spacing.lg)
@@ -238,7 +262,7 @@ struct HomeView: View {
     @ViewBuilder
     private var attentionSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Needs attention")
+            SectionHeader(title: String(localized: "Needs attention"))
             if dueSoon.isEmpty && docsToReview.isEmpty && failedDocs.isEmpty {
                 Label("All caught up", systemImage: "checkmark.seal")
                     .font(.appSubheadline)
@@ -249,15 +273,15 @@ struct HomeView: View {
                     ForEach(docsToReview.prefix(3)) { doc in
                         attentionRow(
                             icon: "doc.badge.ellipsis", tint: AppTheme.Colors.statusWarning,
-                            title: "Review \(doc.displayTitle)",
-                            subtitle: doc.status == .extracted ? "Details found — confirm before saving" : "Text read — add details by hand"
+                            title: String(localized: "Review \(doc.displayTitle)"),
+                            subtitle: doc.status == .extracted ? String(localized: "Details found — confirm before saving") : String(localized: "Text read — add details by hand")
                         ) { appState.sheet = .review(documentID: doc.id) }
                     }
                     ForEach(failedDocs.prefix(2)) { doc in
                         attentionRow(
                             icon: "exclamationmark.triangle", tint: AppTheme.Colors.statusDanger,
-                            title: "Couldn't read \(doc.displayTitle)",
-                            subtitle: "Retry or enter details by hand"
+                            title: String(localized: "Couldn't read \(doc.displayTitle)"),
+                            subtitle: String(localized: "Retry or enter details by hand")
                         ) { appState.open(.document(doc.id), in: .documents, compact: isCompact) }
                     }
                     ForEach(dueSoon.prefix(4)) { reminder in
@@ -288,7 +312,8 @@ struct HomeView: View {
                     }
                 }
                 Spacer(minLength: 0)
-                badge
+                // The badge keeps its full text (long German labels); the title wraps instead.
+                if let badge { badge.fixedSize() }
                 Image(systemName: "chevron.right").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             .padding(.horizontal, AppTheme.Spacing.lg)
@@ -302,22 +327,22 @@ struct HomeView: View {
 
     private var vetSummarySection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Ready for the vet", actionTitle: "Export PDF") { appState.sheet = .export }
+            SectionHeader(title: String(localized: "Ready for the vet"), actionTitle: String(localized: "Export PDF")) { appState.sheet = .export }
             VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
-                summaryGroup(title: "Active medications", symbol: "pills.fill", empty: "None recorded", items: activeMeds.map { med in
+                summaryGroup(title: String(localized: "Active medications"), symbol: "pills.fill", empty: String(localized: "None recorded"), items: activeMeds.map { med in
                     SummaryItem(id: med.id, name: med.title, detail: [med.dosageText, med.frequencyText].compactMap { $0 }.joined(separator: " · "))
                 })
                 Divider()
-                summaryGroup(title: "Latest vaccinations", symbol: "syringe.fill", empty: "None recorded", items: latestVaccines.prefix(4).map { vaccine in
-                    let given = "Given \(vaccine.eventDate.shortDate)"
+                summaryGroup(title: String(localized: "Latest vaccinations"), symbol: "syringe.fill", empty: String(localized: "None recorded"), items: latestVaccines.prefix(4).map { vaccine in
+                    let given = String(localized: "Given \(vaccine.eventDate.shortDate)")
                     return SummaryItem(
                         id: vaccine.id, name: vaccine.title,
-                        detail: vaccine.nextDueDate.map { "\(given) · next due \($0.shortDate)" } ?? given
+                        detail: vaccine.nextDueDate.map { String(localized: "Given \(vaccine.eventDate.shortDate) · next due \($0.shortDate)") } ?? given
                     )
                 })
                 if !allergies.isEmpty {
                     Divider()
-                    summaryGroup(title: "Allergies", symbol: "allergens.fill", empty: "", items: allergies.map { SummaryItem(id: $0.id, name: $0.title, detail: $0.notes ?? "") })
+                    summaryGroup(title: String(localized: "Allergies"), symbol: "allergens.fill", empty: "", items: allergies.map { SummaryItem(id: $0.id, name: $0.title, detail: $0.notes ?? "") })
                 }
             }
             .card()
@@ -355,7 +380,7 @@ struct HomeView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: "Recent history", actionTitle: events.isEmpty ? nil : "See all") {
+            SectionHeader(title: String(localized: "Recent history"), actionTitle: events.isEmpty ? nil : "See all") {
                 appState.section = .history
             }
             if events.isEmpty {

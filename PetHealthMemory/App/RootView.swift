@@ -165,20 +165,20 @@ private struct DetailPlaceholder: View {
 
     private var placeholderTitle: String {
         switch section {
-        case .documents: "Select a document"
-        case .history: "Select a record"
-        case .reminders: "Reminders"
-        case .search: "Search everything"
-        case .home: "Pet Health Memory"
+        case .documents: String(localized: "Select a document")
+        case .history: String(localized: "Select a record")
+        case .reminders: String(localized: "Reminders")
+        case .search: String(localized: "Search everything")
+        case .home: String(localized: "Pet Health Memory")
         }
     }
 
     private var placeholderMessage: String {
         switch section {
-        case .documents: "Drop PDFs or photos onto the list to import them."
-        case .history: "Records you open appear here, with their source document."
-        case .reminders: "Pick a reminder to edit it, or press ⇧⌘R to add one."
-        case .search: "Vaccines, medications, clinics, notes and text inside documents."
+        case .documents: String(localized: "Drop PDFs or photos onto the list to import them.")
+        case .history: String(localized: "Records you open appear here, with their source document.")
+        case .reminders: String(localized: "Pick a reminder to edit it, or press ⇧⌘R to add one.")
+        case .search: String(localized: "Vaccines, medications, clinics, notes and text inside documents.")
         case .home: ""
         }
     }

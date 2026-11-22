@@ -19,11 +19,11 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
 
     var title: String {
         switch self {
-        case .home: "Home"
-        case .history: "Health History"
-        case .documents: "Documents"
-        case .reminders: "Reminders"
-        case .search: "Search"
+        case .home: String(localized: "Home")
+        case .history: String(localized: "Health History")
+        case .documents: String(localized: "Documents")
+        case .reminders: String(localized: "Reminders")
+        case .search: String(localized: "Search")
         }
     }
 

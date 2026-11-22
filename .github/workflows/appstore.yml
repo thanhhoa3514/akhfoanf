@@ -9,6 +9,8 @@ on:
       - "PetHealthMemory/Tests/UITests/AppStoreScreenshots.swift"
       - "scripts/appstore_frames.py"
       - ".github/workflows/appstore.yml"
+      - "PetHealthMemory/App/SampleCopy.swift"
+      - "PetHealthMemory/Resources/Localizable.xcstrings"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -59,25 +61,34 @@ jobs:
             --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
           echo "UDID=$udid" >> "$GITHUB_ENV"
 
-      - name: Capture screenshots
+      - name: Build for testing
         run: |
-          xcodebuild test \
-            -project PetHealthMemory.xcodeproj \
-            -scheme PetHealthMemory \
-            -destination "id=$UDID" \
-            -derivedDataPath DerivedData \
-            -resultBundlePath AppStore.xcresult \
-            -only-testing:PetHealthMemoryUITests/AppStoreScreenshots \
-            CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee test.log | grep -E "error:|Test Case .*(passed|failed)|\*\* TEST" || true
-          grep -q "TEST SUCCEEDED" test.log
+          xcodebuild build-for-testing \
+            -project PetHealthMemory.xcodeproj -scheme PetHealthMemory \
+            -destination "id=$UDID" -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tail -3
 
-      - name: Export and frame
-        if: always()
+      # One run per store language on the same simulator. The test reads APPSTORE_LANG
+      # (xcodebuild passes TEST_RUNNER_* variables to the runner without the prefix).
+      - name: Capture and frame (en, de, fr, ja)
         run: |
-          mkdir -p raw appstore
-          xcrun xcresulttool export attachments --path AppStore.xcresult --output-path raw || true
-          python3 scripts/appstore_frames.py --input raw --output appstore --device ${{ matrix.device }}
+          failed=0
+          for lang in en de fr ja; do
+            echo "::group::$lang"
+            TEST_RUNNER_APPSTORE_LANG=$lang xcodebuild test-without-building \
+              -project PetHealthMemory.xcodeproj -scheme PetHealthMemory \
+              -destination "id=$UDID" -derivedDataPath DerivedData \
+              -resultBundlePath "AppStore-$lang.xcresult" \
+              -only-testing:PetHealthMemoryUITests/AppStoreScreenshots \
+              CODE_SIGNING_ALLOWED=NO 2>&1 | tee "test-$lang.log" | grep -E "error:|Test Case .*(passed|failed)|\*\* TEST" || true
+            grep -q "TEST.* SUCCEEDED" "test-$lang.log" || { echo "::error::$lang test failed"; failed=1; }
+            mkdir -p "raw/$lang"
+            xcrun xcresulttool export attachments --path "AppStore-$lang.xcresult" --output-path "raw/$lang" || true
+            python3 scripts/appstore_frames.py --input "raw/$lang" --output "out/$lang" \
+              --device ${{ matrix.device }} --lang $lang || failed=1
+            echo "::endgroup::"
+          done
+          exit $failed
 
       - name: Upload
         if: always()
@@ -85,6 +96,6 @@ jobs:
         with:
           name: appstore-${{ matrix.device }}
           path: |
-            appstore/
-            test.log
+            out/
+            test-*.log
           retention-days: 30

@@ -56,7 +56,7 @@ struct DocumentsListView: View {
                                 Button(type.title) { typeFilter = type }
                             }
                         } label: {
-                            Label(typeFilter?.title ?? "All types", systemImage: "line.3.horizontal.decrease")
+                            Label(typeFilter?.title ?? String(localized: "All types"), systemImage: "line.3.horizontal.decrease")
                                 .font(.appCaption)
                         }
                         .fixedSize()

@@ -64,7 +64,7 @@ struct PetFormView: View {
                         avatar
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(photoData == nil ? "Add photo" : "Change photo")
+                    .accessibilityLabel(photoData == nil ? String(localized: "Add photo") : String(localized: "Change photo"))
 
                     TextField("Name", text: $name)
                         .font(.title3.weight(.semibold))
@@ -72,7 +72,7 @@ struct PetFormView: View {
                         .submitLabel(.done)
                 }
                 Picker("Species", selection: $species) {
-                    ForEach(Self.speciesOptions, id: \.self) { Text($0) }
+                    ForEach(Self.speciesOptions, id: \.self) { Text(PetModel.displayName(species: $0)) }
                 }
                 if species == "Other" {
                     TextField("Species", text: $customSpecies)
@@ -86,7 +86,7 @@ struct PetFormView: View {
                     DatePicker("Born", selection: $birthDate, in: ...Date.now, displayedComponents: .date)
                 }
                 Picker("Sex", selection: $sex) {
-                    ForEach(Self.sexOptions, id: \.self) { Text($0) }
+                    ForEach(Self.sexOptions, id: \.self) { Text(PetModel.displayName(sex: $0)) }
                 }
                 Picker("Weight unit", selection: $weightUnit) {
                     Text("kg").tag(WeightUnit.kg)
@@ -146,8 +146,8 @@ struct PetFormView: View {
     private var navigationTitle: String {
         switch mode {
         case .firstLaunch: ""
-        case .create: "New Pet"
-        case .edit: "Edit Profile"
+        case .create: String(localized: "New Pet")
+        case .edit: String(localized: "Edit Profile")
         }
     }
 

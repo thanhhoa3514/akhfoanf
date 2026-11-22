@@ -96,13 +96,13 @@ struct PetProfileDetailView: View {
     private func details(_ pet: PetModel) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
             if let birth = pet.birthDate {
-                InfoRow(label: "Date of birth", value: birth.shortDate, systemImage: "birthday.cake")
+                InfoRow(label: String(localized: "Date of birth"), value: birth.shortDate, systemImage: "birthday.cake")
             }
-            InfoRow(label: "Sex", value: pet.sex ?? "Not set", systemImage: "circle.lefthalf.filled")
+            InfoRow(label: String(localized: "Sex"), value: pet.sex.map { PetModel.displayName(sex: $0) } ?? String(localized: "Not set"), systemImage: "circle.lefthalf.filled")
             if let chip = pet.microchipNumber {
-                InfoRow(label: "Microchip", value: chip, systemImage: "barcode")
+                InfoRow(label: String(localized: "Microchip"), value: chip, systemImage: "barcode")
             }
-            InfoRow(label: "Weight unit", value: pet.weightUnit, systemImage: "scalemass")
+            InfoRow(label: String(localized: "Weight unit"), value: pet.weightUnit, systemImage: "scalemass")
         }
         .card()
     }
@@ -132,7 +132,7 @@ struct PetProfileDetailView: View {
                 .frame(height: 56)
                 .accessibilityLabel("Weight trend")
             } else {
-                Text(weights.isEmpty ? "No weight logged yet" : "Log one more entry to see a trend")
+                Text(weights.isEmpty ? String(localized: "No weight logged yet") : String(localized: "Log one more entry to see a trend"))
                     .font(.appSubheadline)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }

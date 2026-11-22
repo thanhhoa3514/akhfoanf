@@ -23,6 +23,14 @@ struct ExportReportView: View {
     enum RangeOption: String, CaseIterable, Identifiable {
         case allTime = "All time", last12Months = "Last 12 months", last3Months = "Last 3 months", custom = "Custom"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .allTime: String(localized: "All time")
+            case .last12Months: String(localized: "Last 12 months")
+            case .last3Months: String(localized: "Last 3 months")
+            case .custom: String(localized: "Custom")
+            }
+        }
     }
 
     init(petID: UUID) {
@@ -58,7 +66,7 @@ struct ExportReportView: View {
         Form {
             Section("Date range") {
                 Picker("Range", selection: $range) {
-                    ForEach(RangeOption.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(RangeOption.allCases) { Text($0.title).tag($0) }
                 }
                 if range == .custom {
                     DatePicker("From", selection: $customStart, in: ...customEnd, displayedComponents: .date)
@@ -81,7 +89,7 @@ struct ExportReportView: View {
                 Button(action: generate) {
                     HStack {
                         if isGenerating { ProgressView().controlSize(.small) }
-                        Text(reportURL == nil ? "Create PDF" : "Create again")
+                        Text(reportURL == nil ? String(localized: "Create PDF") : String(localized: "Create again"))
                     }
                 }
                 .buttonStyle(.primary)
@@ -139,7 +147,7 @@ struct ExportReportView: View {
                     pet: pet, events: events, weights: weights, documents: documents, options: resolvedOptions
                 )
             } catch {
-                errorMessage = (error as? LocalizedError)?.errorDescription ?? "The PDF couldn't be created."
+                errorMessage = (error as? LocalizedError)?.errorDescription ?? String(localized: "The PDF couldn't be created.")
             }
             isGenerating = false
         }

@@ -32,6 +32,12 @@ struct ExtractionReviewView: View {
     enum LeftPane: String, CaseIterable, Identifiable {
         case original = "Original", text = "Recognized text"
         var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .original: String(localized: "Original")
+            case .text: String(localized: "Recognized text")
+            }
+        }
     }
 
     init(documentID: UUID, dismissesFlow: (() -> Void)? = nil) {
@@ -69,7 +75,7 @@ struct ExtractionReviewView: View {
         .animation(AppTheme.Motion.animation(AppTheme.Motion.confirm, reduceMotion: reduceMotion), value: saved == nil)
         .sensoryFeedback(.success, trigger: saved != nil) { _, isSaved in isSaved }
         .canvasBackground()
-        .navigationTitle(saved == nil ? (model.isManualMode ? "Add Details" : "Review Details") : "")
+        .navigationTitle(saved == nil ? (model.isManualMode ? String(localized: "Add Details") : String(localized: "Review Details")) : "")
         .inlineTitleOnPhone()
         .navigationBarBackButtonHiddenCompat()
         .toolbar {
@@ -192,7 +198,7 @@ struct ExtractionReviewView: View {
                     }
                 }
             } label: {
-                Label(model.isManualMode && model.records.isEmpty ? "Add a record from this document" : "Add another record", systemImage: "plus.circle")
+                Label(model.isManualMode && model.records.isEmpty ? String(localized: "Add a record from this document") : String(localized: "Add another record"), systemImage: "plus.circle")
                     .font(.body.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: AppTheme.Size.minTouch)
             }
@@ -225,11 +231,12 @@ struct ExtractionReviewView: View {
             let flagged = model.flaggedCount
             Label {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("We found \(model.records.count) \(model.records.count == 1 ? "record" : "records")")
+                    Text(model.records.count == 1 ? String(localized: "We found 1 record")
+                                                  : String(localized: "We found \(model.records.count) records"))
                         .font(.appSubheadline.weight(.semibold))
-                    Text(flagged > 0
-                         ? "\(flagged) \(flagged == 1 ? "field is" : "fields are") marked Check — compare them with the original."
-                         : "Check each one against the original before saving.")
+                    Text(flagged == 0 ? String(localized: "Check each one against the original before saving.")
+                         : flagged == 1 ? String(localized: "1 field is marked Check — compare it with the original.")
+                         : String(localized: "\(flagged) fields are marked Check — compare them with the original."))
                         .font(.appCaption)
                 }
             } icon: {
@@ -346,19 +353,19 @@ private struct RecordCard: View {
                         .frame(width: AppTheme.Size.minTouch, height: AppTheme.Size.minTouch)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(record.included ? "Included — tap to skip" : "Skipped — tap to include")
+                .accessibilityLabel(record.included ? String(localized: "Included — tap to skip") : String(localized: "Skipped — tap to include"))
 
                 TypeIcon(systemImage: record.kind.eventType.symbol, tint: record.kind.eventType.tint)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(record.kind.title).font(.appCaption.weight(.semibold)).foregroundStyle(AppTheme.Colors.textSecondary)
-                    Text(record.field(record.kind.primaryKey)?.value.nilIfEmpty.map(displayTitle) ?? "New \(record.kind.title.lowercased())")
+                    Text(record.field(record.kind.primaryKey)?.value.nilIfEmpty.map(displayTitle) ?? String(localized: "New \(record.kind.title)"))
                         .font(.headline)
                         .lineLimit(2)
                 }
                 Spacer()
                 Menu {
                     ForEach(addableKeys, id: \.self) { key in
-                        Button("Add \(key.label.lowercased())") {
+                        Button("Add \(key.label)") {
                             withAnimation(AppTheme.Motion.animation(AppTheme.Motion.standard, reduceMotion: reduceMotion)) {
                                 model.addField(key, to: record.id)
                             }
@@ -479,7 +486,7 @@ private struct FieldRow: View {
             }
 
             if field.needsCheck {
-                Button(field.isEmpty ? "Leave empty" : "Looks right", action: onLooksRight)
+                Button(field.isEmpty ? String(localized: "Leave empty") : String(localized: "Looks right"), action: onLooksRight)
                     .font(.appSubheadline.weight(.semibold))
                     .buttonStyle(.bordered)
                     .tint(AppTheme.Colors.warningText)
@@ -544,7 +551,7 @@ struct SourcePane: View {
     var body: some View {
         VStack(spacing: 0) {
             Picker("View", selection: $pane) {
-                ForEach(ExtractionReviewView.LeftPane.allCases) { Text($0.rawValue).tag($0) }
+                ForEach(ExtractionReviewView.LeftPane.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -561,7 +568,7 @@ struct SourcePane: View {
                                 .font(.appCaption.weight(.semibold))
                                 .foregroundStyle(AppTheme.Colors.sourceText)
                         }
-                        Text(highlighted(document.ocrText ?? "No text was recognized.", term: highlight))
+                        Text(highlighted(document.ocrText ?? String(localized: "No text was recognized."), term: highlight))
                             .font(.callout.monospaced())
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -608,7 +615,7 @@ private struct SavedConfirmationView: View {
                     .symbolEffect(.bounce, value: appeared)
                     .padding(.top, AppTheme.Spacing.xxxl)
                 VStack(spacing: AppTheme.Spacing.xs) {
-                    Text(saved.isEmpty ? "Document reviewed" : "Saved to \(petName)'s timeline")
+                    Text(saved.isEmpty ? String(localized: "Document reviewed") : String(localized: "Saved to \(petName)'s timeline"))
                         .font(.title2.weight(.bold))
                     Text("Each record links back to the original document.")
                         .foregroundStyle(AppTheme.Colors.textSecondary)
@@ -641,7 +648,7 @@ private struct SavedConfirmationView: View {
                         ForEach(dueSuggestions) { item in
                             Button {
                                 onAddReminder(ReminderDraft(
-                                    title: "\(item.title) due",
+                                    title: String(localized: "\(item.title) due"),
                                     type: item.type == .vaccination ? .vaccination : .medication,
                                     dueDate: item.nextDueDate ?? .now,
                                     healthEventId: item.id

@@ -46,47 +46,51 @@ enum LaunchOptions {
 /// Deterministic demo data for screenshots. Dates are relative to now so "due soon" and
 /// "overdue" states always render the same way.
 enum SampleData {
+    /// Wording follows the app's language, so localized screenshot runs show local data.
+    private static var copy: SampleCopy { SampleCopy.forLanguage(Bundle.main.preferredLocalizations.first ?? "en") }
+
     @MainActor
     static func insert(into context: ModelContext) {
+        let copy = Self.copy
         let calendar = Calendar.current
         func days(_ offset: Int) -> Date {
             calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: .now)) ?? .now
         }
 
-        let clinic = CareProviderModel(clinicName: "Riverside Animal Clinic", vetName: "Dr. Lan Pham",
+        let clinic = CareProviderModel(clinicName: copy.clinicName, vetName: copy.vetName,
                                        phone: "+84 28 3822 1234")
         context.insert(clinic)
 
-        let pet = PetModel(name: "Mochi", species: "Dog", breed: "Shiba Inu",
+        let pet = PetModel(name: "Mochi", species: "Dog", breed: copy.breed,
                            birthDate: calendar.date(byAdding: .year, value: -4, to: .now),
                            sex: "Female", microchipNumber: "900215001234567")
         context.insert(pet)
 
         let rabies = HealthEventModel(petId: pet.id, type: HealthEventType.vaccination.rawValue,
-                                      title: "Rabies", eventDate: days(-340), providerId: clinic.id,
+                                      title: copy.rabies, eventDate: days(-340), providerId: clinic.id,
                                       providerName: clinic.clinicName, nextDueDate: days(25))
-        let dhpp = HealthEventModel(petId: pet.id, type: HealthEventType.vaccination.rawValue,
-                                    title: "DHPP", eventDate: days(-200), providerId: clinic.id,
-                                    providerName: clinic.clinicName, nextDueDate: days(165))
-        let apoquel = HealthEventModel(petId: pet.id, type: HealthEventType.medication.rawValue,
-                                       title: "Apoquel", eventDate: days(-14),
-                                       dosageText: "5.4 mg tablet", frequencyText: "Once daily with food",
-                                       startDate: days(-14), endDate: days(16),
-                                       medicationStatus: MedicationStatus.active.rawValue)
+        let combined = HealthEventModel(petId: pet.id, type: HealthEventType.vaccination.rawValue,
+                                        title: copy.combinedVaccine, eventDate: days(-200), providerId: clinic.id,
+                                        providerName: clinic.clinicName, nextDueDate: days(165))
+        let medication = HealthEventModel(petId: pet.id, type: HealthEventType.medication.rawValue,
+                                          title: copy.medication, eventDate: days(-14),
+                                          dosageText: copy.dosage, frequencyText: copy.frequency,
+                                          startDate: days(-14), endDate: days(16),
+                                          medicationStatus: MedicationStatus.active.rawValue)
         let visit = HealthEventModel(petId: pet.id, type: HealthEventType.veterinaryVisit.rawValue,
-                                     title: "Annual check-up", eventDate: days(-14),
-                                     notes: "Mild skin allergy. Recheck in 4 weeks.",
+                                     title: copy.visitTitle, eventDate: days(-14),
+                                     notes: copy.visitNotes,
                                      providerId: clinic.id, providerName: clinic.clinicName)
         let allergy = HealthEventModel(petId: pet.id, type: HealthEventType.allergy.rawValue,
-                                       title: "Chicken protein", eventDate: days(-400))
-        [rabies, dhpp, apoquel, visit, allergy].forEach { context.insert($0) }
+                                       title: copy.allergy, eventDate: days(-400))
+        [rabies, combined, medication, visit, allergy].forEach { context.insert($0) }
 
         let reminders = [
-            ReminderModel(petId: pet.id, healthEventId: rabies.id, title: "Rabies booster",
+            ReminderModel(petId: pet.id, healthEventId: rabies.id, title: copy.rabiesBooster,
                           reminderType: ReminderType.vaccination.rawValue, dueDate: days(25)),
-            ReminderModel(petId: pet.id, healthEventId: apoquel.id, title: "Apoquel refill",
+            ReminderModel(petId: pet.id, healthEventId: medication.id, title: copy.medicationRefill,
                           reminderType: ReminderType.medication.rawValue, dueDate: days(-1)),
-            ReminderModel(petId: pet.id, title: "Skin recheck",
+            ReminderModel(petId: pet.id, title: copy.skinRecheck,
                           reminderType: ReminderType.veterinaryAppointment.rawValue, dueDate: days(14)),
         ]
         reminders.forEach { context.insert($0) }
@@ -96,7 +100,7 @@ enum SampleData {
             context.insert(WeightEntryModel(petId: pet.id, weight: kg, measurementDate: days(offset)))
         }
 
-        insertDocuments(into: context, petID: pet.id, rabies: rabies, days: days)
+        insertDocuments(into: context, copy: copy, petID: pet.id, rabies: rabies, days: days)
         try? context.save()
     }
 
@@ -104,20 +108,15 @@ enum SampleData {
 
     /// One reviewed certificate (linked to the Rabies record) and one report waiting for review.
     @MainActor
-    private static func insertDocuments(into context: ModelContext, petID: UUID,
+    private static func insertDocuments(into context: ModelContext, copy: SampleCopy, petID: UUID,
                                         rabies: HealthEventModel, days: (Int) -> Date) {
         let storage = LocalFileStorage()
 
-        let certificateLines = [
-            "RIVERSIDE ANIMAL CLINIC", "Vaccination certificate", "",
-            "Patient: MOCHI   Species: Canine   Breed: Shiba Inu",
-            "Rabies - Nobivac 1yr      given 17/12/25",
-            "Next due 17/12/26", "", "Dr. Lan Pham",
-        ]
+        let certificateLines = copy.certificateLines
         if let path = try? storage.saveFile(data: makePDF(lines: certificateLines),
                                             fileName: "rabies-certificate.pdf", subdirectory: "documents") {
             let certificate = DocumentModel(petId: petID, filePath: path, originalFileName: "rabies-certificate.pdf",
-                                            title: "Rabies certificate", mimeType: "application/pdf",
+                                            title: copy.certificateTitle, mimeType: "application/pdf",
                                             documentType: DocumentType.vaccinationCertificate.rawValue,
                                             ocrText: certificateLines.joined(separator: "\n"), pageCount: 1,
                                             processingStatus: ProcessingStatus.reviewed.rawValue,
@@ -126,17 +125,11 @@ enum SampleData {
             rabies.sourceDocumentId = certificate.id
         }
 
-        let reportLines = [
-            "RIVERSIDE ANIMAL CLINIC", "Consultation report", "",
-            "Patient: MOCHI    Date: 08/11/2026", "Wt 10.2kg",
-            "Dx: mild atopic dermatitis",
-            "Rx: Apoquel 5.4mg tab - 1 tab SID with food x 30d",
-            "DHPPi booster given", "Recheck 4 wks  next due 11/12/27",
-        ]
+        let reportLines = copy.reportLines
         guard let path = try? storage.saveFile(data: makePDF(lines: reportLines),
                                                fileName: "checkup-report.pdf", subdirectory: "documents") else { return }
         let report = DocumentModel(petId: petID, filePath: path, originalFileName: "checkup-report.pdf",
-                                   title: "Check-up report", mimeType: "application/pdf",
+                                   title: copy.reportTitle, mimeType: "application/pdf",
                                    documentType: DocumentType.veterinaryVisitReport.rawValue,
                                    ocrText: reportLines.joined(separator: "\n"), pageCount: 1,
                                    processingStatus: ProcessingStatus.extracted.rawValue,
@@ -145,17 +138,17 @@ enum SampleData {
 
         typealias Key = ExtractionFieldKey
         let fields: [(Key, String?, String, String, Bool, String?)] = [
-            (.documentType, DocumentType.veterinaryVisitReport.rawValue, "Consultation report", "high", false, nil),
-            (.petName, "Mochi", "Patient: MOCHI", "high", false, nil),
-            (.clinic, "Riverside Animal Clinic", "RIVERSIDE ANIMAL CLINIC", "high", false, nil),
-            (.visitDate, "2026-11-08", "Date: 08/11/2026", "high", false, nil),
-            (.weight, "10.2 kg", "Wt 10.2kg", "high", false, nil),
-            (.diagnosisText, "Mild atopic dermatitis", "Dx: mild atopic dermatitis", "medium", false, "diagnosis-0"),
-            (.medicationName, "Apoquel 5.4mg", "Apoquel 5.4mg tab", "high", false, "medication-0"),
-            (.dosageText, "1 tab", "1 tab", "high", false, "medication-0"),
-            (.frequencyText, "SID with food", "SID with food", "low", true, "medication-0"),
-            (.vaccineName, "DHPPi", "DHPPi booster given", "medium", false, "vaccination-0"),
-            (.nextDueDate, nil, "next due 11/12/27", "low", true, "vaccination-0"),
+            (.documentType, DocumentType.veterinaryVisitReport.rawValue, copy.reportHeading, "high", false, nil),
+            (.petName, "Mochi", copy.petNameSource, "high", false, nil),
+            (.clinic, copy.clinicName, copy.reportLines[0], "high", false, nil),
+            (.visitDate, "2026-11-08", copy.dateSource, "high", false, nil),
+            (.weight, "10.2 kg", copy.weightSource, "high", false, nil),
+            (.diagnosisText, copy.diagnosis.value, copy.diagnosis.source, "medium", false, "diagnosis-0"),
+            (.medicationName, copy.medicationField.value, copy.medicationField.source, "high", false, "medication-0"),
+            (.dosageText, copy.dosageField.value, copy.dosageField.source, "high", false, "medication-0"),
+            (.frequencyText, copy.frequencyField.value, copy.frequencyField.source, "low", true, "medication-0"),
+            (.vaccineName, copy.vaccineField.value, copy.vaccineField.source, "medium", false, "vaccination-0"),
+            (.nextDueDate, nil, copy.nextDueSource, "low", true, "vaccination-0"),
         ]
         for (order, field) in fields.enumerated() {
             context.insert(ExtractedFieldModel(documentId: report.id, fieldName: field.0.rawValue,

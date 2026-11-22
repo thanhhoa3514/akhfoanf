@@ -3,7 +3,7 @@
 
 Usage:
     python3 scripts/appstore_frames.py --input snapshots/ --output appstore/ --device iphone
-    python3 scripts/appstore_frames.py --input snapshots/ --output appstore/ --device ipad
+    python3 scripts/appstore_frames.py --input snapshots/ --output appstore/ --device ipad --lang de
 
 `--input` is the folder written by `xcrun xcresulttool export attachments` (PNG files plus
 manifest.json). Output sizes are the ones App Store Connect accepts:
@@ -26,19 +26,58 @@ MINT = (231, 242, 239)        # #E7F2EF, brandPrimarySoft
 WHITE = (255, 255, 255)
 
 # Store order. The first three are what people see in App Store search results.
-CAPTIONS: dict[str, tuple[str, str]] = {
-    "appstore-01-home": ("Your pet's health,\nall in one place", "Vaccines, medication, visits and documents."),
-    "appstore-02-review": ("Scan a vet document.\nWe do the typing.", "Read on your device. You check every detail."),
-    "appstore-03-history": ("Every record links\nto its source", "A timeline you can trust at the vet."),
-    "appstore-04-reminders": ("Never miss\na booster", "Due-soon reminders for vaccines and meds."),
-    "appstore-05-search": ("Find anything\nin seconds", "Even words inside scanned documents. Offline."),
-    "appstore-06-document": ("Private\nby design", "Everything stays on your device. No account."),
+SHOTS = ["appstore-01-home", "appstore-02-review", "appstore-03-history",
+         "appstore-04-reminders", "appstore-05-search", "appstore-06-document"]
+
+# (title, subtitle) per language, in store order. Keep titles to two short lines.
+CAPTIONS: dict[str, list[tuple[str, str]]] = {
+    "en": [
+        ("Your pet's health,\nall in one place", "Vaccines, medication, visits and documents."),
+        ("Scan a vet document.\nWe do the typing.", "Read on your device. You check every detail."),
+        ("Every record links\nto its source", "A timeline you can trust at the vet."),
+        ("Never miss\na booster", "Due-soon reminders for vaccines and meds."),
+        ("Find anything\nin seconds", "Even words inside scanned documents. Offline."),
+        ("Private\nby design", "Everything stays on your device. No account."),
+    ],
+    "de": [
+        ("Die Gesundheit deines\nTieres an einem Ort", "Impfungen, Medikamente, Besuche, Dokumente."),
+        ("Dokument scannen.\nWir tippen ab.", "Gelesen auf deinem Gerät. Geprüft von dir."),
+        ("Jeder Eintrag mit\nOriginalbeleg", "Eine Akte, auf die du dich verlassen kannst."),
+        ("Keine Auffrischung\nmehr verpassen", "Erinnerungen für Impfungen und Medikamente."),
+        ("Alles in\nSekunden finden", "Sogar Text in gescannten Dokumenten. Offline."),
+        ("Privat von\nAnfang an", "Alles bleibt auf deinem Gerät. Kein Konto."),
+    ],
+    "fr": [
+        ("La santé de votre\nanimal, réunie", "Vaccins, traitements, visites et documents."),
+        ("Scannez un document.\nOn fait la saisie.", "Lu sur votre appareil. Vérifié par vous."),
+        ("Chaque fiche reliée\nà sa source", "Un historique fiable chez le vétérinaire."),
+        ("Ne manquez plus\naucun rappel", "Rappels pour les vaccins et les traitements."),
+        ("Tout retrouver\nen quelques secondes", "Même le texte des documents scannés. Hors ligne."),
+        ("Privé par\nconception", "Tout reste sur votre appareil. Sans compte."),
+    ],
+    "ja": [
+        ("ペットの健康記録を\nひとつの場所に", "ワクチン・お薬・通院・書類をまとめて管理"),
+        ("書類をスキャン。\n入力はおまかせ。", "読み取りは端末内。内容はあなたが確認。"),
+        ("すべての記録が\n元の書類とつながる", "獣医さんにも見せられる、確かな記録"),
+        ("追加接種を\nもう忘れない", "ワクチンとお薬の予定をリマインド"),
+        ("すぐに\n見つかる", "スキャンした書類の文字まで検索。オフライン対応"),
+        ("プライバシー\n重視", "データは端末内に。アカウント登録不要"),
+    ],
 }
 
 TARGETS = {
     "iphone": [("iphone-6.9in", (1320, 2868)), ("iphone-6.5in", (1284, 2778))],
     "ipad": [("ipad-13in", (2752, 2064))],
 }
+
+# Latin first; Japanese needs a CJK face (Hiragino ships with macOS).
+CJK_FONTS = {
+    True: ["/System/Library/Fonts/ヒラギノ角ゴシック W7.ttc", "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc",
+           "/System/Library/Fonts/Hiragino Sans GB.ttc", "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"],
+    False: ["/System/Library/Fonts/ヒラギノ角ゴシック W4.ttc", "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
+            "/System/Library/Fonts/Hiragino Sans GB.ttc", "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"],
+}
+USE_CJK = False
 
 FONT_CANDIDATES = [
     "/System/Library/Fonts/SFNS.ttf",
@@ -49,7 +88,7 @@ FONT_CANDIDATES = [
 
 
 def load_font(size: int, bold: bool) -> ImageFont.FreeTypeFont:
-    for path in FONT_CANDIDATES:
+    for path in (CJK_FONTS[bold] if USE_CJK else []) + FONT_CANDIDATES:
         if not Path(path).exists():
             continue
         try:
@@ -154,7 +193,7 @@ def load_shots(folder: Path) -> dict[str, Path]:
         for attachment in test.get("attachments", []):
             name = attachment.get("suggestedHumanReadableName", "").split("_0_")[0]
             file = folder / attachment.get("exportedFileName", "")
-            if name in CAPTIONS and file.suffix == ".png":
+            if name in SHOTS and file.suffix == ".png":
                 shots[name] = file
     return shots
 
@@ -164,23 +203,27 @@ def main() -> None:
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device", choices=sorted(TARGETS), required=True)
+    parser.add_argument("--lang", choices=sorted(CAPTIONS), default="en")
     args = parser.parse_args()
+    global USE_CJK
+    USE_CJK = args.lang == "ja"
+    captions = dict(zip(SHOTS, CAPTIONS[args.lang]))
 
     shots = load_shots(args.input)
-    missing = [name for name in CAPTIONS if name not in shots]
+    missing = [name for name in SHOTS if name not in shots]
     if missing:
         print("warning: missing screenshots:", ", ".join(missing))
 
     for folder_name, size in TARGETS[args.device]:
         out_dir = args.output / folder_name
         out_dir.mkdir(parents=True, exist_ok=True)
-        for index, name in enumerate(n for n in CAPTIONS if n in shots):
+        for index, name in enumerate(n for n in SHOTS if n in shots):
             shot = Image.open(shots[name]).convert("RGB")
             # Simulator screenshots stay in portrait pixels when the device is rotated;
             # turn landscape-device shots back upright (content is rotated clockwise).
             if size[0] > size[1] and shot.height > shot.width:
                 shot = shot.rotate(90, expand=True)
-            title, subtitle = CAPTIONS[name]
+            title, subtitle = captions[name]
             compose = compose_landscape if size[0] > size[1] else compose_portrait
             image = compose(shot, size, title, subtitle)
             assert image.size == size, (image.size, size)

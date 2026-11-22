@@ -44,13 +44,13 @@ struct DocumentStatusPill: View {
     var body: some View {
         switch status {
         case .pending:
-            Pill(text: "Processing", systemImage: "hourglass", tint: AppTheme.Colors.textSecondary, textColor: AppTheme.Colors.textSecondary)
+            Pill(text: String(localized: "Processing"), systemImage: "hourglass", tint: AppTheme.Colors.textSecondary, textColor: AppTheme.Colors.textSecondary)
         case .ocrCompleted, .extracted:
-            Pill(text: "Needs review", systemImage: "questionmark.circle.fill", tint: AppTheme.Colors.statusWarning, textColor: AppTheme.Colors.warningText)
+            Pill(text: String(localized: "Needs review"), systemImage: "questionmark.circle.fill", tint: AppTheme.Colors.statusWarning, textColor: AppTheme.Colors.warningText)
         case .reviewed:
-            Pill(text: "Reviewed", systemImage: "checkmark.seal.fill", tint: AppTheme.Colors.statusSuccess, textColor: AppTheme.Colors.successText)
+            Pill(text: String(localized: "Reviewed"), systemImage: "checkmark.seal.fill", tint: AppTheme.Colors.statusSuccess, textColor: AppTheme.Colors.successText)
         case .failed:
-            Pill(text: "Couldn't read", systemImage: "exclamationmark.triangle.fill", tint: AppTheme.Colors.statusDanger, textColor: AppTheme.Colors.dangerText)
+            Pill(text: String(localized: "Couldn't read"), systemImage: "exclamationmark.triangle.fill", tint: AppTheme.Colors.statusDanger, textColor: AppTheme.Colors.dangerText)
         }
     }
 }

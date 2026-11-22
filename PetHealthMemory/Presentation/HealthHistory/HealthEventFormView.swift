@@ -39,7 +39,7 @@ struct HealthEventFormView: View {
                     }
                 }
                 TextField(titlePlaceholder, text: $title)
-                DatePicker(type == .medication ? "Start date" : "Date", selection: $date, displayedComponents: .date)
+                DatePicker(type == .medication ? String(localized: "Start date") : String(localized: "Date"), selection: $date, displayedComponents: .date)
                 TextField("Clinic (optional)", text: $clinic)
                 if clinic.isEmpty, !providers.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -85,7 +85,7 @@ struct HealthEventFormView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .canvasBackground()
-        .navigationTitle(existing == nil ? "New Record" : "Edit Record")
+        .navigationTitle(existing == nil ? String(localized: "New Record") : String(localized: "Edit Record"))
         .inlineTitleOnPhone()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
@@ -96,12 +96,12 @@ struct HealthEventFormView: View {
 
     private var titlePlaceholder: String {
         switch type {
-        case .vaccination: "Vaccine name"
-        case .medication: "Medication name"
-        case .veterinaryVisit: "Reason for visit"
-        case .allergy: "Allergic to…"
-        case .laboratoryResult: "Test name"
-        default: "Title"
+        case .vaccination: String(localized: "Vaccine name")
+        case .medication: String(localized: "Medication name")
+        case .veterinaryVisit: String(localized: "Reason for visit")
+        case .allergy: String(localized: "Allergic to…")
+        case .laboratoryResult: String(localized: "Test name")
+        default: String(localized: "Title")
         }
     }
 

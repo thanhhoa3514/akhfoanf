@@ -1,0 +1,1 @@
+chien,chat,vaccin,vétérinaire,carnet,rage,médicament,rappel,chiot,chaton,ordonnance,scanner

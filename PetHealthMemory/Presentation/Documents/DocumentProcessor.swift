@@ -15,10 +15,10 @@ enum DocumentProcessor {
 
         var title: String {
             switch self {
-            case .saving: "Saving original"
-            case .reading: "Reading text"
-            case .extracting: "Finding details"
-            case .ready: "Ready to review"
+            case .saving: String(localized: "Saving original")
+            case .reading: String(localized: "Reading text")
+            case .extracting: String(localized: "Finding details")
+            case .ready: String(localized: "Ready to review")
             }
         }
     }
@@ -129,7 +129,7 @@ final class CapturePipeline {
             document = doc
             await process(context: context, container: container)
         } catch {
-            phase = .failed(message: "The file couldn't be saved. Check available storage and try again.")
+            phase = .failed(message: String(localized: "The file couldn't be saved. Check available storage and try again."))
         }
     }
 
@@ -145,7 +145,7 @@ final class CapturePipeline {
             }
             phase = .finished(documentID: document.id)
         } catch {
-            phase = .failed(message: (error as? LocalizedError)?.errorDescription ?? "The text couldn't be read.")
+            phase = .failed(message: (error as? LocalizedError)?.errorDescription ?? String(localized: "The text couldn't be read."))
         }
     }
 }
