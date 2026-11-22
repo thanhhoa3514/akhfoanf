@@ -93,8 +93,9 @@ final class ScreenshotTests: XCTestCase {
 
     private func launch(seeded: Bool, scheme: String) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing", "-color-scheme", scheme]
-        if seeded { app.launchArguments.append("-seed-sample-data") }
+        // Always `-key value` pairs (see LaunchOptions in the app).
+        app.launchArguments = ["-ui-testing", "YES", "-color-scheme", scheme]
+        if seeded { app.launchArguments += ["-seed-sample-data", "YES"] }
         #if os(macOS)
         // Start from a fresh window instead of restoring the previous test's state.
         app.launchArguments += ["-ApplePersistenceIgnoreState", "YES"]

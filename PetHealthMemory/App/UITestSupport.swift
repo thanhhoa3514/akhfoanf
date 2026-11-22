@@ -7,21 +7,22 @@ import SwiftUI
 import UIKit
 #endif
 
-/// Launch arguments used by the UI test target (`PetHealthMemoryUITests`).
+/// Launch arguments used by the UI test target (`PetHealthMemoryUITests`), always as
+/// `-key value` pairs so they land in the UserDefaults argument domain. (A bare flag such as
+/// `-ui-testing` would swallow the next argument, and macOS then treats the leftover value as a
+/// file to open, which suppresses the app's initial window.)
 ///
-/// - `-ui-testing`: in-memory store, no persisted pet selection, no animations.
-/// - `-seed-sample-data`: inserts a realistic demo pet with history (only with `-ui-testing`).
+/// - `-ui-testing YES`: in-memory store, no persisted pet selection, no animations.
+/// - `-seed-sample-data YES`: inserts a realistic demo pet with history (only with `-ui-testing`).
 /// - `-color-scheme dark|light`: forces the appearance for screenshot runs.
 enum LaunchOptions {
-    private static let arguments = ProcessInfo.processInfo.arguments
+    private static let defaults = UserDefaults.standard
 
-    static let isUITesting = arguments.contains("-ui-testing")
-    static let seedSampleData = isUITesting && arguments.contains("-seed-sample-data")
+    static let isUITesting = defaults.bool(forKey: "ui-testing")
+    static let seedSampleData = isUITesting && defaults.bool(forKey: "seed-sample-data")
 
     static var colorScheme: ColorScheme? {
-        guard let index = arguments.firstIndex(of: "-color-scheme"),
-              arguments.indices.contains(index + 1) else { return nil }
-        switch arguments[index + 1] {
+        switch defaults.string(forKey: "color-scheme") {
         case "dark": return .dark
         case "light": return .light
         default: return nil
