@@ -79,8 +79,13 @@ final class AppStoreScreenshots: XCTestCase {
         if isPad {
             // Sidebar row (the first list). Plain staticTexts[section] can hit a same-named
             // heading in the detail column, e.g. the "Reminders" card.
-            let sidebarRow = app.collectionViews.firstMatch.staticTexts[section].firstMatch
-            if !tap(sidebarRow) { tap(app.staticTexts[section].firstMatch) }
+            // The sidebar is the left-most column, so take the left-most match.
+            _ = app.staticTexts[section].firstMatch.waitForExistence(timeout: 5)
+            let matches = app.staticTexts.matching(identifier: section).allElementsBoundByIndex
+                .filter { $0.exists && !$0.frame.isEmpty }
+            if let row = matches.min(by: { $0.frame.minX < $1.frame.minX }) {
+                row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            }
         } else {
             tap(app.tabBars.buttons[section].firstMatch)
         }
