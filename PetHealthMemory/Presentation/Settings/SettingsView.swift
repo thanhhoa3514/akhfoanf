@@ -119,9 +119,9 @@ struct SettingsView: View {
 
     private var syncFooter: String {
         switch SyncMode(rawValue: syncModeRaw) ?? .localOnly {
-        case .localOnly: "Nothing leaves this device. You can turn sync on at any time."
-        case .iCloud: "Records and documents sync privately through your iCloud account across iPhone, iPad and Mac."
-        case .backend: "Needed for sharing with sitters or family. Requires Sign in with Apple."
+        case .localOnly: String(localized: "Nothing leaves this device. You can turn sync on at any time.")
+        case .iCloud: String(localized: "Records and documents sync privately through your iCloud account across iPhone, iPad and Mac.")
+        case .backend: String(localized: "Needed for sharing with sitters or family. Requires Sign in with Apple.")
         }
     }
 
@@ -139,9 +139,9 @@ struct SettingsView: View {
 
     private var authorizationText: String {
         switch authorization {
-        case .authorized: "On"
-        case .denied: "Off"
-        case .notDetermined: "Not set up"
+        case .authorized: String(localized: "On")
+        case .denied: String(localized: "Off")
+        case .notDetermined: String(localized: "Not set up")
         }
     }
 

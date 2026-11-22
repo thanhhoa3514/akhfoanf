@@ -146,8 +146,8 @@ struct PetFormView: View {
     private var navigationTitle: String {
         switch mode {
         case .firstLaunch: ""
-        case .create: "New Pet"
-        case .edit: "Edit Profile"
+        case .create: String(localized: "New Pet")
+        case .edit: String(localized: "Edit Profile")
         }
     }
 

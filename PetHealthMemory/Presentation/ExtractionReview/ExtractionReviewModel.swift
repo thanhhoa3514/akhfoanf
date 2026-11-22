@@ -245,7 +245,7 @@ final class ExtractionReviewModel {
 
     var saveTitle: String {
         if includedRecords.isEmpty { return String(localized: "Select a record to save") }
-        if blockingCount > 0 { return blockingCount == 1 ? "1 record needs attention" : "\(blockingCount) records need attention" }
+        if blockingCount > 0 { return blockingCount == 1 ? String(localized: "1 record needs attention") : String(localized: "\(blockingCount) records need attention") }
         return includedRecords.count == 1 ? String(localized: "Save 1 record") : String(localized: "Save \(includedRecords.count) records")
     }
 

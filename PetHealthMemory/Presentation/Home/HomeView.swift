@@ -309,10 +309,10 @@ struct HomeView: View {
                 })
                 Divider()
                 summaryGroup(title: String(localized: "Latest vaccinations"), symbol: "syringe.fill", empty: String(localized: "None recorded"), items: latestVaccines.prefix(4).map { vaccine in
-                    let given = "Given \(vaccine.eventDate.shortDate)"
+                    let given = String(localized: "Given \(vaccine.eventDate.shortDate)")
                     return SummaryItem(
                         id: vaccine.id, name: vaccine.title,
-                        detail: vaccine.nextDueDate.map { "\(given) · next due \($0.shortDate)" } ?? given
+                        detail: vaccine.nextDueDate.map { String(localized: "Given \(vaccine.eventDate.shortDate) · next due \($0.shortDate)") } ?? given
                     )
                 })
                 if !allergies.isEmpty {

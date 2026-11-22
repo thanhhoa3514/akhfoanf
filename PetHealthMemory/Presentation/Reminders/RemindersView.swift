@@ -97,7 +97,7 @@ struct RemindersView: View {
     }
 
     @ViewBuilder
-    private func group(_ title: String, _ items: [ReminderModel]) -> some View {
+    private func group(_ title: LocalizedStringKey, _ items: [ReminderModel]) -> some View {
         if !items.isEmpty {
             Section(title) {
                 ForEach(items) { row($0) }

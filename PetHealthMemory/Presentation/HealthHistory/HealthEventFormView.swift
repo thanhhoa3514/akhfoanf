@@ -96,12 +96,12 @@ struct HealthEventFormView: View {
 
     private var titlePlaceholder: String {
         switch type {
-        case .vaccination: "Vaccine name"
-        case .medication: "Medication name"
-        case .veterinaryVisit: "Reason for visit"
-        case .allergy: "Allergic to…"
-        case .laboratoryResult: "Test name"
-        default: "Title"
+        case .vaccination: String(localized: "Vaccine name")
+        case .medication: String(localized: "Medication name")
+        case .veterinaryVisit: String(localized: "Reason for visit")
+        case .allergy: String(localized: "Allergic to…")
+        case .laboratoryResult: String(localized: "Test name")
+        default: String(localized: "Title")
         }
     }
 

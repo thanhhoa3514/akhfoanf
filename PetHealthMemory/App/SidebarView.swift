@@ -57,7 +57,12 @@ struct SidebarView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: AppTheme.Spacing.sm) {
                 Button { appState.sheet = .capture(source: nil) } label: {
-                    Label("Import Document", systemImage: "doc.badge.plus")
+                    // Long translations (German) fall back to the short label instead of truncating.
+                    ViewThatFits(in: .horizontal) {
+                        Label("Import Document", systemImage: "doc.badge.plus")
+                        Label("Import…", systemImage: "doc.badge.plus")
+                    }
+                    .lineLimit(1)
                         #if os(macOS)
                         .frame(maxWidth: .infinity)
                         #endif

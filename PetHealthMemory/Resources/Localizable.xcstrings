@@ -155,6 +155,28 @@
         }
       }
     },
+    "%lld records need attention": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Einträge brauchen Aufmerksamkeit"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld fiches à traiter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld件の記録に確認が必要です"
+          }
+        }
+      }
+    },
     "%lld records were created from it. They're kept, but lose their source link.": {
       "localizations": {
         "de": {
@@ -239,6 +261,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "1か月"
+          }
+        }
+      }
+    },
+    "1 record needs attention": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Eintrag braucht Aufmerksamkeit"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 fiche à traiter"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1件の記録に確認が必要です"
           }
         }
       }
@@ -943,6 +987,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "すべての種類"
+          }
+        }
+      }
+    },
+    "Allergic to…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allergisch gegen…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allergique à…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アレルギーの原因…"
           }
         }
       }
@@ -2663,6 +2729,28 @@
         }
       }
     },
+    "Drop PDFs or photos onto the list to import them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zieh PDFs oder Fotos auf die Liste, um sie zu importieren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez des PDF ou des photos sur la liste pour les importer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDFや写真をリストにドロップして読み込みます。"
+          }
+        }
+      }
+    },
     "Drop a PDF or photo, or press ⌘I. Read on this device.": {
       "localizations": {
         "de": {
@@ -2835,6 +2923,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "編集"
+          }
+        }
+      }
+    },
+    "Edit Profile": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil bearbeiten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le profil"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロフィールを編集"
           }
         }
       }
@@ -3587,6 +3697,50 @@
         }
       }
     },
+    "Given %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verabreicht %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait le %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接種 %@"
+          }
+        }
+      }
+    },
+    "Given %@ · next due %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verabreicht %1$@ · nächster Termin %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fait le %1$@ · prochain rappel %2$@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接種 %1$@ · 次回 %2$@"
+          }
+        }
+      }
+    },
     "Health History": {
       "localizations": {
         "de": {
@@ -4335,6 +4489,28 @@
         }
       }
     },
+    "Medication name": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name des Medikaments"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du traitement"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お薬の名前"
+          }
+        }
+      }
+    },
     "Medications": {
       "localizations": {
         "de": {
@@ -4489,6 +4665,28 @@
         }
       }
     },
+    "Needed for sharing with sitters or family. Requires Sign in with Apple.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nötig zum Teilen mit Tiersittern oder Familie. Erfordert „Mit Apple anmelden“."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nécessaire pour partager avec un pet-sitter ou la famille. Requiert « Se connecter avec Apple »."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ペットシッターや家族との共有に必要です。「Appleでサインイン」が必要です。"
+          }
+        }
+      }
+    },
     "Needs attention": {
       "localizations": {
         "de": {
@@ -4639,6 +4837,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "新しい健康記録"
+          }
+        }
+      }
+    },
+    "New Pet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neues Tier"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvel animal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいペット"
           }
         }
       }
@@ -5127,6 +5347,28 @@
         }
       }
     },
+    "Not set up": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht eingerichtet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non configuré"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定"
+          }
+        }
+      }
+    },
     "Not stated": {
       "localizations": {
         "de": {
@@ -5259,6 +5501,28 @@
         }
       }
     },
+    "Nothing leaves this device. You can turn sync on at any time.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts verlässt dieses Gerät. Du kannst die Synchronisierung jederzeit einschalten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne quitte cet appareil. Vous pouvez activer la synchronisation à tout moment."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "データはこの端末の外に出ません。同期はいつでもオンにできます。"
+          }
+        }
+      }
+    },
     "Notifications": {
       "localizations": {
         "de": {
@@ -5299,6 +5563,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "通知はオフです"
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ"
+          }
+        }
+      }
+    },
+    "On": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オン"
           }
         }
       }
@@ -5589,6 +5897,28 @@
         }
       }
     },
+    "Overdue": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überfällig"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En retard"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期限切れ"
+          }
+        }
+      }
+    },
     "Overdue · %lldd": {
       "localizations": {
         "de": {
@@ -5871,6 +6201,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真"
+          }
+        }
+      }
+    },
+    "Pick a reminder to edit it, or press ⇧⌘R to add one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle eine Erinnerung zum Bearbeiten oder drücke ⇧⌘R für eine neue."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un rappel pour le modifier, ou appuyez sur ⇧⌘R pour en ajouter un."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リマインダーを選んで編集するか、⇧⌘Rで追加します。"
           }
         }
       }
@@ -6161,6 +6513,28 @@
         }
       }
     },
+    "Reason for visit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grund des Besuchs"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motif de la visite"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通院の理由"
+          }
+        }
+      }
+    },
     "Recent history": {
       "localizations": {
         "de": {
@@ -6271,6 +6645,28 @@
         }
       }
     },
+    "Records and documents sync privately through your iCloud account across iPhone, iPad and Mac.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einträge und Dokumente werden privat über dein iCloud-Konto zwischen iPhone, iPad und Mac synchronisiert."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les fiches et documents se synchronisent en privé via votre compte iCloud sur iPhone, iPad et Mac."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記録と書類は、iCloudアカウントを通じてiPhone、iPad、Mac間で非公開に同期されます。"
+          }
+        }
+      }
+    },
     "Records created from it are kept, but lose their source link.": {
       "localizations": {
         "de": {
@@ -6333,6 +6729,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "期間内の記録"
+          }
+        }
+      }
+    },
+    "Records you open appear here, with their source document.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geöffnete Einträge erscheinen hier, mit ihrem Quelldokument."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les fiches que vous ouvrez s’affichent ici, avec leur document source."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開いた記録が、元の書類とともにここに表示されます。"
           }
         }
       }
@@ -6883,6 +7301,72 @@
           "stringUnit": {
             "state": "translated",
             "value": "すべての記録を検索"
+          }
+        }
+      }
+    },
+    "Search everything": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles durchsuchen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout rechercher"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてを検索"
+          }
+        }
+      }
+    },
+    "Select a document": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokument auswählen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un document"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書類を選択"
+          }
+        }
+      }
+    },
+    "Select a record": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eintrag auswählen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une fiche"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記録を選択"
           }
         }
       }
@@ -7525,6 +8009,28 @@
         }
       }
     },
+    "Test name": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name der Untersuchung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de l’analyse"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検査名"
+          }
+        }
+      }
+    },
     "Text is read on this device. Nothing is uploaded.": {
       "localizations": {
         "de": {
@@ -8031,6 +8537,28 @@
         }
       }
     },
+    "This week": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Woche"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette semaine"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今週"
+          }
+        }
+      }
+    },
     "Title": {
       "localizations": {
         "de": {
@@ -8361,6 +8889,28 @@
         }
       }
     },
+    "Vaccine name": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name des Impfstoffs"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du vaccin"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ワクチン名"
+          }
+        }
+      }
+    },
     "Vaccines": {
       "localizations": {
         "de": {
@@ -8379,6 +8929,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "ワクチン"
+          }
+        }
+      }
+    },
+    "Vaccines, medications, clinics, notes and text inside documents.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impfungen, Medikamente, Praxen, Notizen und Text in Dokumenten."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaccins, traitements, cliniques, notes et texte des documents."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ワクチン、お薬、動物病院、メモ、書類の中の文字。"
           }
         }
       }
