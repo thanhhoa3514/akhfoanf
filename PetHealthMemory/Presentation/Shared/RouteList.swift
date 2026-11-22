@@ -17,6 +17,11 @@ struct RouteList<Content: View>: View {
                 List { content() }
             } else {
                 List(selection: $appState.detailRoute) { content() }
+                    #if os(iOS)
+                    // iPadOS fills a focused selection with the tint; the solid brand green made
+                    // the rows' dark text unreadable. A soft tint keeps text legible.
+                    .tint(AppTheme.Colors.brandPrimarySoft)
+                    #endif
             }
         }
         #if os(iOS)

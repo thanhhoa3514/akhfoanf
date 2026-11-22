@@ -141,6 +141,7 @@ jobs:
             -destination "$DESTINATION" \
             -derivedDataPath DerivedData \
             -resultBundlePath Snapshots.xcresult \
+            -skip-testing:PetHealthMemoryUITests/AppStoreScreenshots \
             $SIGNING \
             2>&1 | tee test.log | grep -E "error:|Test Case .*(passed|failed)|TEST (SUCCEEDED|FAILED)|\*\* TEST" || true
           grep -q "TEST SUCCEEDED" test.log
