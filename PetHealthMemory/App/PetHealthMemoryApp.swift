@@ -33,6 +33,7 @@ struct PetHealthMemoryApp: App {
                 .environment(container)
                 .environment(appState)
                 .frame(width: 520, height: 560)
+                .preferredColorScheme(LaunchOptions.colorScheme)
         }
         .modelContainer(modelContainer)
         #endif

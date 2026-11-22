@@ -59,10 +59,32 @@ final class ScreenshotTests: XCTestCase {
             snapshot(app, "\(scheme)-06-search")
         }
         #else
-        for (index, section) in ["Health History", "Documents", "Reminders", "Search"].enumerated() {
-            if tapIfExists(app.staticTexts[section].firstMatch) {
-                snapshot(app, "\(scheme)-0\(index + 2)-\(section.lowercased().replacingOccurrences(of: " ", with: "-"))")
+        // macOS: three-column split view. Sidebar section → content list → detail.
+        openSection(app, "Health History")
+        tapIfExists(app.staticTexts["Rabies"].firstMatch)
+        snapshot(app, "\(scheme)-02-history")
+
+        openSection(app, "Documents")
+        tapIfExists(app.staticTexts["Rabies certificate"].firstMatch)
+        snapshot(app, "\(scheme)-04-documents")
+
+        if tapIfExists(app.staticTexts["Check-up report"].firstMatch) {
+            snapshot(app, "\(scheme)-04b-document-to-review")
+            if tapIfExists(app.buttons["Review"].firstMatch) {
+                snapshot(app, "\(scheme)-04c-review")
+                tapIfExists(app.buttons["Later"].firstMatch)
             }
+        }
+
+        openSection(app, "Reminders")
+        snapshot(app, "\(scheme)-05-reminders")
+
+        openSection(app, "Search")
+        snapshot(app, "\(scheme)-06-search")
+
+        app.typeKey(",", modifierFlags: .command)
+        if app.windows.count > 1 || app.windows.firstMatch.waitForExistence(timeout: 3) {
+            snapshot(app, "\(scheme)-07-settings")
         }
         #endif
     }
@@ -73,6 +95,10 @@ final class ScreenshotTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-color-scheme", scheme]
         if seeded { app.launchArguments.append("-seed-sample-data") }
+        #if os(macOS)
+        // Start from a fresh window instead of restoring the previous test's state.
+        app.launchArguments += ["-ApplePersistenceIgnoreState", "YES"]
+        #endif
         app.launch()
         return app
     }
@@ -88,6 +114,13 @@ final class ScreenshotTests: XCTestCase {
     private func goBack(_ app: XCUIApplication) {
         let back = app.navigationBars.buttons.element(boundBy: 0)
         if back.exists { back.tap() }
+    }
+    #else
+    private func openSection(_ app: XCUIApplication, _ title: String) {
+        let sidebarRow = app.outlines.firstMatch.staticTexts[title].firstMatch
+        if !tapIfExists(sidebarRow, timeout: 3), !tapIfExists(app.staticTexts[title].firstMatch) {
+            XCTFail("Sidebar section '\(title)' not found")
+        }
     }
     #endif
 
@@ -106,7 +139,14 @@ final class ScreenshotTests: XCTestCase {
         // Let transitions and async thumbnails settle (animations are disabled in -ui-testing).
         _ = app.wait(for: .runningForeground, timeout: 2)
         Thread.sleep(forTimeInterval: 0.5)
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        #if os(macOS)
+        // The frontmost window only (not the whole runner desktop).
+        let window = app.windows.firstMatch
+        let image = window.exists ? window.screenshot() : app.screenshot()
+        #else
+        let image = app.screenshot()
+        #endif
+        let attachment = XCTAttachment(screenshot: image)
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)

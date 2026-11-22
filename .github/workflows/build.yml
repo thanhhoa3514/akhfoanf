@@ -63,10 +63,20 @@ jobs:
           retention-days: 7
 
   ui-snapshots:
-    name: UI snapshots (iPhone)
+    name: UI snapshots (${{ matrix.name }})
     needs: build
     runs-on: macos-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iPhone
+            platform: ios
+            artifact: ui-snapshots-iphone
+          - name: macOS
+            platform: macos
+            artifact: ui-snapshots-macos
     steps:
       - uses: actions/checkout@v4
 
@@ -80,33 +90,36 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Pick an iPhone simulator
-        id: sim
+      - name: Pick and prepare an iPhone simulator
+        if: matrix.platform == 'ios'
         run: |
           udid=$(xcrun simctl list devices available -j \
             | jq -r '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone [0-9]+$"))] | last | .udid')
-          echo "Using simulator $udid"
           xcrun simctl list devices available | grep "$udid"
-          echo "udid=$udid" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare simulator
-        run: |
-          xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
+          xcrun simctl boot "$udid" || true
           # Skip the one-time keyboard tips that would cover the screenshots.
-          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true
-          xcrun simctl spawn "${{ steps.sim.outputs.udid }}" defaults write com.apple.keyboard.preferences DidShowGestureKeyboardIntroduction -bool true
-          xcrun simctl status_bar "${{ steps.sim.outputs.udid }}" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
+          xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true
+          xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences DidShowGestureKeyboardIntroduction -bool true
+          xcrun simctl status_bar "$udid" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 || true
+          echo "DESTINATION=id=$udid" >> "$GITHUB_ENV"
+          echo "SIGNING=CODE_SIGNING_ALLOWED=NO" >> "$GITHUB_ENV"
+
+      - name: Prepare macOS destination
+        if: matrix.platform == 'macos'
+        run: |
+          echo "DESTINATION=platform=macOS" >> "$GITHUB_ENV"
+          # macOS UI tests need a signed runner: ad-hoc sign, no team, no hardened runtime.
+          echo "SIGNING=CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= ENABLE_HARDENED_RUNTIME=NO" >> "$GITHUB_ENV"
 
       - name: Run UI tests
         run: |
-          set -o pipefail
           xcodebuild test \
             -project PetHealthMemory.xcodeproj \
             -scheme PetHealthMemory \
-            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -destination "$DESTINATION" \
             -derivedDataPath DerivedData \
             -resultBundlePath Snapshots.xcresult \
-            CODE_SIGNING_ALLOWED=NO \
+            $SIGNING \
             2>&1 | tee test.log | grep -E "error:|Test Case .*(passed|failed)|TEST (SUCCEEDED|FAILED)|\*\* TEST" || true
           grep -q "TEST SUCCEEDED" test.log
 
@@ -123,7 +136,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-snapshots
+          name: ${{ matrix.artifact }}
           path: |
             snapshots/
             test.log
