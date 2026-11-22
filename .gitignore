@@ -1,0 +1,25 @@
+# Secrets / signing
+.env
+.env.*
+*.p8
+*.p12
+*.mobileprovision
+*.cer
+
+# Xcode / Swift
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+.build/
+.swiftpm/
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.xcresult
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
