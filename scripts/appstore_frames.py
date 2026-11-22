@@ -176,6 +176,10 @@ def main() -> None:
         out_dir.mkdir(parents=True, exist_ok=True)
         for index, name in enumerate(n for n in CAPTIONS if n in shots):
             shot = Image.open(shots[name]).convert("RGB")
+            # Simulator screenshots stay in portrait pixels when the device is rotated;
+            # turn landscape-device shots back upright (content is rotated clockwise).
+            if size[0] > size[1] and shot.height > shot.width:
+                shot = shot.rotate(90, expand=True)
             title, subtitle = CAPTIONS[name]
             compose = compose_landscape if size[0] > size[1] else compose_portrait
             image = compose(shot, size, title, subtitle)

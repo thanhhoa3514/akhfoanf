@@ -58,7 +58,7 @@ final class AppStoreScreenshots: XCTestCase {
         let field = app.searchFields.firstMatch
         if field.waitForExistence(timeout: 5) {
             field.tap()
-            field.typeText("Rab")
+            field.typeText("Rab\n") // Return submits and hides the keyboard
             sleep(1)
             capture("appstore-05-search")
         }
