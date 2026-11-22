@@ -36,23 +36,26 @@ PetHealthMemory/
 
 ## Building (iOS + macOS)
 
-There is no `.xcodeproj` checked in yet. To build:
+The Xcode project is generated from [`project.yml`](project.yml) with [XcodeGen](https://github.com/yonaskolb/XcodeGen); the `.xcodeproj` is not checked in.
 
-1. In Xcode 16+ (Xcode 26 recommended), create **File ▸ New ▸ Project ▸ Multiplatform ▸ App** named `PetHealthMemory`, storage **None**.
-2. Delete the template `ContentView.swift` / `*App.swift` and add the `PetHealthMemory/` folder to the target.
-3. Deployment targets: **iOS 17.0**, **macOS 14.0** (SwiftData, `@Observable`, `ContentUnavailableView`, `sensoryFeedback`).
-   The zoom navigation transition switches on automatically on iOS 18+.
-   **Build settings (important):** this code was written without access to a compiler. Pin these so it builds first time:
-   - Swift Language Version: **Swift 5**
-   - Default Actor Isolation: **nonisolated** (Xcode 26 templates default to MainActor)
-   - Strict Concurrency Checking: **Minimal**
+```bash
+brew install xcodegen
+xcodegen generate
+open PetHealthMemory.xcodeproj
+```
 
-   Migrate to Swift 6 strict concurrency afterwards. Start with `Thumbnailer`, which returns a non-Sendable `NSImage` out of `Task.detached`.
-4. Info.plist / capabilities:
-   - `NSCameraUsageDescription`: "Scan vet documents. Scans stay on this device." (iOS document scanner)
-   - macOS App Sandbox: **User Selected File ▸ Read Only** (Files import and drag & drop).
-   - The iCloud / CloudKit capability is only needed once Sprint 7 sync ships.
-5. Run. First launch opens the pet profile form.
+`project.yml` already sets:
+
+- One multiplatform target (iPhone, iPad, Mac). Deployment targets **iOS 17.0** / **macOS 14.0** (SwiftData, `@Observable`, `ContentUnavailableView`, `sensoryFeedback`). The zoom navigation transition switches on automatically on iOS 18+.
+- Swift **5** language mode, Default Actor Isolation **nonisolated**, Strict Concurrency **Minimal**. Migrate to Swift 6 strict concurrency afterwards; start with `Thumbnailer`, which returns a non-Sendable `NSImage` out of `Task.detached`.
+- `NSCameraUsageDescription` (iOS document scanner) and, on macOS, App Sandbox with **User Selected File ▸ Read Only** (Files import and drag & drop).
+- Bundle ID `com.pethealthmemory.app`. Change it and pick your signing team in Xcode before running on a device.
+
+The iCloud / CloudKit capability is only needed once sync ships.
+
+**CI:** [`.github/workflows/build.yml`](.github/workflows/build.yml) builds for iOS Simulator and macOS on every push to `main` and every pull request, unsigned. The full log is uploaded as an artifact.
+
+Run the app: first launch opens the pet profile form.
 
 **Trying the review UI before Foundation Models is wired:** in a DEBUG build, open Settings ▸ Developer ▸
 *Simulate detail extraction* and import any PDF or photo. The sample data includes ambiguous fields, two vaccines and a medication.
