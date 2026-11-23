@@ -299,21 +299,35 @@ struct HomeView: View {
         }
     }
 
+    private func attentionText(title: String, subtitle: String?) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.appSubheadline.weight(.semibold)).foregroundStyle(AppTheme.Colors.textPrimary)
+            if let subtitle {
+                Text(subtitle).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
+            }
+        }
+    }
+
     private func attentionRow(
         icon: String, tint: Color, title: String, subtitle: String?, badge: AnyView? = nil, action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             HStack(spacing: AppTheme.Spacing.md) {
                 TypeIcon(systemImage: icon, tint: tint)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.appSubheadline.weight(.semibold)).foregroundStyle(AppTheme.Colors.textPrimary).lineLimit(2)
-                    if let subtitle {
-                        Text(subtitle).font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
+                // Badge beside the title when both fit on one line; otherwise under it, so long
+                // German/French titles ("Tollwut-Auffrischung") are never cut in narrow columns.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: AppTheme.Spacing.md) {
+                        attentionText(title: title, subtitle: subtitle).fixedSize(horizontal: true, vertical: false)
+                        Spacer(minLength: 0)
+                        if let badge { badge.fixedSize() }
                     }
+                    VStack(alignment: .leading, spacing: 4) {
+                        attentionText(title: title, subtitle: subtitle)
+                        if let badge { badge.fixedSize() }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Spacer(minLength: 0)
-                // The badge keeps its full text (long German labels); the title wraps instead.
-                if let badge { badge.fixedSize() }
                 Image(systemName: "chevron.right").font(.appCaption).foregroundStyle(AppTheme.Colors.textSecondary)
             }
             .padding(.horizontal, AppTheme.Spacing.lg)
@@ -380,7 +394,7 @@ struct HomeView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            SectionHeader(title: String(localized: "Recent history"), actionTitle: events.isEmpty ? nil : "See all") {
+            SectionHeader(title: String(localized: "Recent history"), actionTitle: events.isEmpty ? nil : String(localized: "See all")) {
                 appState.section = .history
             }
             if events.isEmpty {

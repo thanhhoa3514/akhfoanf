@@ -9,6 +9,7 @@ enum Route: Hashable {
     case document(UUID)
     case petProfile(UUID)
     case weightLog(UUID)
+    case reminder(UUID)
 }
 
 /// Sidebar sections (macOS / iPad) == tabs (iPhone).

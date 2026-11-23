@@ -177,28 +177,35 @@ struct TimelineRow: View {
                         .foregroundStyle(AppTheme.Colors.textSecondary)
                         .lineLimit(2)
                 }
-                HStack(spacing: AppTheme.Spacing.xs) {
-                    if event.eventType == .medication {
-                        Pill(
-                            text: event.isActiveMedication ? String(localized: "Active") : String(localized: "Completed"),
-                            systemImage: event.isActiveMedication ? "circle.fill" : "checkmark",
-                            tint: event.isActiveMedication ? AppTheme.Colors.statusSuccess : AppTheme.Colors.textSecondary,
-                            textColor: event.isActiveMedication ? AppTheme.Colors.successText : AppTheme.Colors.textSecondary
-                        )
-                    }
-                    if let due = event.nextDueDate {
-                        DueBadge(date: due, soonWindow: event.eventType == .vaccination
-                                 ? DueState.vaccineSoonWindow : DueState.defaultSoonWindow)
-                    }
-                    if let sourceTitle {
-                        SourceBadge(title: sourceTitle)
-                    }
+                // Badges stay whole (long German labels); they stack when the column is narrow.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: AppTheme.Spacing.xs) { badges }
+                    VStack(alignment: .leading, spacing: AppTheme.Spacing.xs) { badges }
                 }
             }
         }
         .padding(.vertical, AppTheme.Spacing.xs)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(event.eventType.title), \(event.title), \(event.eventDate.shortDate)")
+    }
+
+    @ViewBuilder
+    private var badges: some View {
+        if event.eventType == .medication {
+            Pill(
+                text: event.isActiveMedication ? String(localized: "Active") : String(localized: "Completed"),
+                systemImage: event.isActiveMedication ? "circle.fill" : "checkmark",
+                tint: event.isActiveMedication ? AppTheme.Colors.statusSuccess : AppTheme.Colors.textSecondary,
+                textColor: event.isActiveMedication ? AppTheme.Colors.successText : AppTheme.Colors.textSecondary
+            )
+        }
+        if let due = event.nextDueDate {
+            DueBadge(date: due, soonWindow: event.eventType == .vaccination
+                     ? DueState.vaccineSoonWindow : DueState.defaultSoonWindow)
+        }
+        if let sourceTitle {
+            SourceBadge(title: sourceTitle)
+        }
     }
 
     private var keyDetail: String? {

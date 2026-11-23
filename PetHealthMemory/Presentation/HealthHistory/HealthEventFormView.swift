@@ -79,7 +79,7 @@ struct HealthEventFormView: View {
             }
 
             Section("Notes") {
-                TextField("Notes", text: $notes, axis: .vertical).lineLimit(3...8)
+                TextField("Optional", text: $notes, axis: .vertical).lineLimit(3...8)
             }
         }
         .formStyle(.grouped)

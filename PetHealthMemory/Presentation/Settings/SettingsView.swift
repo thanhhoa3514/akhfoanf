@@ -139,7 +139,7 @@ struct SettingsView: View {
     private var syncStatusRow: some View {
         switch SyncMode(rawValue: syncModeRaw) ?? .localOnly {
         case .localOnly:
-            Label("Local only", systemImage: "internaldrive").foregroundStyle(AppTheme.Colors.textSecondary)
+            EmptyView()
         case .iCloud, .backend:
             // TODO(Sprint 7): bind to SyncEngineProtocol status (synced / syncing / offline — saved locally).
             Label("Sync is coming soon — data stays local for now", systemImage: "clock.arrow.circlepath")

@@ -52,6 +52,7 @@ struct DocumentDetailView: View {
                     linkedCard
                 }
                 .padding(AppTheme.Spacing.lg)
+                .padding(.bottom, AppTheme.Spacing.xxl)
                 .frame(maxWidth: 820)
                 .frame(maxWidth: .infinity)
             }

@@ -156,7 +156,7 @@ struct SearchView: View {
                 }
             }
         }
-        .searchable(text: $query, isPresented: $appState.isSearchPresented, prompt: "Vaccines, meds, clinics, document text")
+        .searchable(text: $query, isPresented: $appState.isSearchPresented, prompt: "Vaccines, meds, clinics, or text")
         .searchScopes($scope) {
             ForEach(Scope.allCases) { Text($0.title).tag($0) }
         }

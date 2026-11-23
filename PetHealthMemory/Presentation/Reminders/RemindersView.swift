@@ -9,6 +9,7 @@ struct RemindersView: View {
     @Environment(AppState.self) private var appState
     @Environment(AppContainer.self) private var container
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isCompactLayout) private var isCompact
     @Query(sort: \ReminderModel.dueDate) private var allReminders: [ReminderModel]
     @Query private var pets: [PetModel]
     @State private var scope: Scope = .thisPet
@@ -39,7 +40,7 @@ struct RemindersView: View {
     private var petNames: [UUID: String] { Dictionary(uniqueKeysWithValues: pets.map { ($0.id, $0.name) }) }
 
     var body: some View {
-        RouteList {
+        RouteList(firstRoute: (overdue.first ?? thisWeek.first ?? later.first).map { .reminder($0.id) }) {
             if pets.count > 1 {
                 Picker("Show", selection: $scope) {
                     ForEach(Scope.allCases) { Text($0.title).tag($0) }
@@ -75,7 +76,7 @@ struct RemindersView: View {
 
             group("Overdue", overdue)
             group("This week", thisWeek)
-            group("Later", later)
+            group("Upcoming", later)
 
             if !completed.isEmpty {
                 Section {
@@ -120,7 +121,9 @@ struct RemindersView: View {
             }
         )
         .contentShape(Rectangle())
-        .onTapGesture { appState.sheet = .editReminder(reminder.id) }
+        // iPhone: tap edits in a sheet. iPad / Mac: the row is a selection that drives the detail column.
+        .onTapGesture { if isCompact { appState.sheet = .editReminder(reminder.id) } }
+        .tag(Route.reminder(reminder.id))
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
                 Task { try? await DataCleanup.delete(reminder: reminder, in: context, container: container) }

@@ -111,7 +111,7 @@
         }
       }
     },
-    "%lld fields are marked Check — compare them with the original.": {
+    "%lld fields need a quick check — compare them with the original.": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -221,7 +221,7 @@
         }
       }
     },
-    "1 field is marked Check — compare it with the original.": {
+    "1 field needs a quick check — compare it with the original.": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -4269,6 +4269,28 @@
         }
       }
     },
+    "Linked record": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zugehöriger Eintrag"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiche liée"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "関連する記録"
+          }
+        }
+      }
+    },
     "Local only": {
       "localizations": {
         "de": {
@@ -4397,6 +4419,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "完了にする"
+          }
+        }
+      }
+    },
+    "Mark as not done": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als offen markieren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer comme à faire"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未完了に戻す"
           }
         }
       }
@@ -5919,6 +5963,28 @@
         }
       }
     },
+    "Pet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tier"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Animal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ペット"
+          }
+        }
+      }
+    },
     "Pet Health Memory": {
       "localizations": {
         "de": {
@@ -5963,7 +6029,7 @@
         }
       }
     },
-    "Pet Health Memory organises your records. It doesn't give medical advice — always follow your vet.": {
+    "Pet Health Memory organizes your records. It doesn't give medical advice — always follow your vet.": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -6117,24 +6183,24 @@
         }
       }
     },
-    "Pick a reminder to edit it, or press ⇧⌘R to add one.": {
+    "Pick a reminder to see it here, or press ⇧⌘R to add one.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wähle eine Erinnerung zum Bearbeiten oder drücke ⇧⌘R für eine neue."
+            "value": "Wähle eine Erinnerung aus, um sie hier zu sehen, oder drücke ⇧⌘R für eine neue."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choisissez un rappel pour le modifier, ou appuyez sur ⇧⌘R pour en ajouter un."
+            "value": "Choisissez un rappel pour l’afficher ici, ou appuyez sur ⇧⌘R pour en ajouter un."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "リマインダーを選んで編集するか、⇧⌘Rで追加します。"
+            "value": "リマインダーを選ぶとここに表示されます。⇧⌘Rで新規追加できます。"
           }
         }
       }
@@ -6689,6 +6755,28 @@
         }
       }
     },
+    "Reminder not found": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnerung nicht gefunden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rappel introuvable"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リマインダーが見つかりません"
+          }
+        }
+      }
+    },
     "Reminders": {
       "localizations": {
         "de": {
@@ -6953,6 +7041,28 @@
         }
       }
     },
+    "Review the highlighted items, or uncheck any record you don't want to save.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüf die markierten Punkte oder wähl Einträge ab, die du nicht behalten willst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez les éléments signalés, ou décochez les fiches que vous ne voulez pas garder."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印の付いた項目を確認するか、不要な記録のチェックを外してください。"
+          }
+        }
+      }
+    },
     "Reviewed": {
       "localizations": {
         "de": {
@@ -7213,6 +7323,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "すべてを検索"
+          }
+        }
+      }
+    },
+    "See all": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle anzeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout voir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべて表示"
           }
         }
       }
@@ -8691,6 +8823,28 @@
         }
       }
     },
+    "Upcoming": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demnächst"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À venir"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今後の予定"
+          }
+        }
+      }
+    },
     "Vaccination": {
       "localizations": {
         "de": {
@@ -8845,7 +8999,7 @@
         }
       }
     },
-    "Vaccines, meds, clinics, document text": {
+    "Vaccines, meds, clinics, or text": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -9263,7 +9417,7 @@
         }
       }
     },
-    "What needs doing?": {
+    "What do you want to remember?": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -9567,28 +9721,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "元の書類へのリンク"
-          }
-        }
-      }
-    },
-    "Check the marked items, or untick any record you don't want to keep.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prüf die markierten Punkte oder wähl Einträge ab, die du nicht behalten willst."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vérifiez les éléments signalés, ou décochez les fiches que vous ne voulez pas garder."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "印の付いた項目を確認するか、不要な記録のチェックを外してください。"
           }
         }
       }

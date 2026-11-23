@@ -60,7 +60,29 @@ targets:
         CODE_SIGN_STYLE: Automatic
     scheme:
       testTargets:
+        - PetHealthMemoryTests
         - PetHealthMemoryUITests
+
+  # Unit & Vision OCR benchmark tests (runs fast on macOS CI without needing a Simulator).
+  PetHealthMemoryTests:
+    type: bundle.unit-test
+    platform: auto
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: PetHealthMemory/Tests/DomainTests
+        excludes:
+          - "**/.gitkeep"
+    dependencies:
+      - target: PetHealthMemory
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pethealthmemory.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        # The app's product name has spaces, so XcodeGen's default host path is wrong.
+        "TEST_HOST[sdk=iphone*]": "$(BUILT_PRODUCTS_DIR)/Pet Health Memory.app/Pet Health Memory"
+        "TEST_HOST[sdk=macosx*]": "$(BUILT_PRODUCTS_DIR)/Pet Health Memory.app/Contents/MacOS/Pet Health Memory"
+        BUNDLE_LOADER: "$(TEST_HOST)"
 
   # End-to-end UI tests: launch the real app with `-ui-testing` and capture screenshots.
   PetHealthMemoryUITests:
