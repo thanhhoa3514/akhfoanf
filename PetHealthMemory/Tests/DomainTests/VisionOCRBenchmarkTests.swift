@@ -4,7 +4,7 @@ import ImageIO
 import PDFKit
 import UniformTypeIdentifiers
 import XCTest
-@testable import PetHealthMemory
+@testable import Pet_Health_Memory
 
 /// End-to-end Vision OCR + RuleBasedDocumentExtractor benchmark tests.
 /// Synthesizes realistic veterinary PDFs and images on the fly (zero binary assets in Git)

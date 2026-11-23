@@ -1,5 +1,5 @@
 import XCTest
-@testable import PetHealthMemory
+@testable import Pet_Health_Memory
 
 final class RuleBasedDocumentExtractorTests: XCTestCase {
     func testVaccinationCertificateExtractsUnambiguousDatesAndClinic() {
