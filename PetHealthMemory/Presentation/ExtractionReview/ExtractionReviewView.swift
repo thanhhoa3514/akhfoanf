@@ -235,8 +235,8 @@ struct ExtractionReviewView: View {
                                                   : String(localized: "We found \(model.records.count) records"))
                         .font(.appSubheadline.weight(.semibold))
                     Text(flagged == 0 ? String(localized: "Check each one against the original before saving.")
-                         : flagged == 1 ? String(localized: "1 field is marked Check — compare it with the original.")
-                         : String(localized: "\(flagged) fields are marked Check — compare them with the original."))
+                         : flagged == 1 ? String(localized: "1 field needs a quick check — compare it with the original.")
+                         : String(localized: "\(flagged) fields need a quick check — compare them with the original."))
                         .font(.appCaption)
                 }
             } icon: {
@@ -310,7 +310,7 @@ struct ExtractionReviewView: View {
                     .buttonStyle(.plain)
                     .foregroundStyle(AppTheme.Colors.warningText)
                 }
-                Text("Check the marked items, or untick any record you don't want to keep.")
+                Text("Review the highlighted items, or uncheck any record you don't want to save.")
                     .font(.appCaption)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
                     .multilineTextAlignment(.center)

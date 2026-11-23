@@ -142,7 +142,7 @@ enum SampleData {
             (.petName, "Mochi", copy.petNameSource, "high", false, nil),
             (.clinic, copy.clinicName, copy.reportLines[0], "high", false, nil),
             (.visitDate, "2026-11-08", copy.dateSource, "high", false, nil),
-            (.weight, "10.2 kg", copy.weightSource, "high", false, nil),
+            (.weight, "\(10.2.formatted(.number.precision(.fractionLength(1)))) kg", copy.weightSource, "high", false, nil),
             (.diagnosisText, copy.diagnosis.value, copy.diagnosis.source, "medium", false, "diagnosis-0"),
             (.medicationName, copy.medicationField.value, copy.medicationField.source, "high", false, "medication-0"),
             (.dosageText, copy.dosageField.value, copy.dosageField.source, "high", false, "medication-0"),

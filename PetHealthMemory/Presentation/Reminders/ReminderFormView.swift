@@ -27,7 +27,7 @@ struct ReminderFormView: View {
     var body: some View {
         Form {
             Section {
-                TextField("What needs doing?", text: $title)
+                TextField("What do you want to remember?", text: $title)
                 Picker("Type", selection: $type) {
                     ForEach(ReminderType.allCases, id: \.self) { Label($0.title, systemImage: $0.symbol).tag($0) }
                 }

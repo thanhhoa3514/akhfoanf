@@ -124,7 +124,7 @@ private struct SplitRoot: View {
                 .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
         } content: {
             SectionRootView(section: appState.section)
-                .navigationSplitViewColumnWidth(min: 320, ideal: 380, max: 520)
+                .navigationSplitViewColumnWidth(min: 340, ideal: 420, max: 540)
         } detail: {
             NavigationStack {
                 Group {
@@ -177,7 +177,7 @@ private struct DetailPlaceholder: View {
         switch section {
         case .documents: String(localized: "Drop PDFs or photos onto the list to import them.")
         case .history: String(localized: "Records you open appear here, with their source document.")
-        case .reminders: String(localized: "Pick a reminder to edit it, or press ⇧⌘R to add one.")
+        case .reminders: String(localized: "Pick a reminder to see it here, or press ⇧⌘R to add one.")
         case .search: String(localized: "Vaccines, medications, clinics, notes and text inside documents.")
         case .home: ""
         }
@@ -215,6 +215,7 @@ struct RouteView: View {
         case .document(let id): DocumentDetailView(documentID: id).zoomDestination(id: route)
         case .petProfile(let id): PetProfileDetailView(petID: id)
         case .weightLog(let id): WeightLogView(petID: id)
+        case .reminder(let id): ReminderDetailView(reminderID: id)
         }
     }
 }

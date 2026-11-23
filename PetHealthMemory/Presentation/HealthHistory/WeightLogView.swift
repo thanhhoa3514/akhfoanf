@@ -33,6 +33,7 @@ struct WeightLogView: View {
                     }
                     .chartYAxisLabel(unit)
                     .chartYScale(domain: .automatic(includesZero: false))
+                    .chartXScale(range: .plotDimension(padding: 16))
                     .frame(height: 200)
                     .padding(.vertical, AppTheme.Spacing.sm)
                     .accessibilityLabel("Weight over time")

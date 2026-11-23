@@ -380,10 +380,10 @@ struct InfoRow: View {
     }
 }
 
-/// Footer reminding users the app organises records but is not a veterinary authority (PRD §5.10).
+/// Footer reminding users the app organizes records but is not a veterinary authority (PRD §5.10).
 struct MedicalDisclaimer: View {
     var body: some View {
-        Label("Pet Health Memory organises your records. It doesn't give medical advice — always follow your vet.", systemImage: "stethoscope")
+        Label("Pet Health Memory organizes your records. It doesn't give medical advice — always follow your vet.", systemImage: "stethoscope")
             .font(.footnote)
             .foregroundStyle(AppTheme.Colors.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)

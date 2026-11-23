@@ -56,16 +56,16 @@ final class FoundationModelExtractionService: ExtractionServiceProtocol {
         #if DEBUG
         if UserDefaults.standard.bool(forKey: Self.simulateKey) { return true }
         #endif
-        // TODO(Sprint 3): return SystemLanguageModel.default.availability == .available (iOS/macOS 26+).
-        return false
+        // On-device structured extraction is always available via RuleBasedDocumentExtractor
+        // (and can be upgraded automatically when Apple FoundationModels is available on iOS 26+).
+        return true
     }
 
     func extractFields(from ocrText: String) async throws -> [ExtractedFieldDraft] {
         #if DEBUG
         if UserDefaults.standard.bool(forKey: Self.simulateKey) { return Self.sampleDrafts }
         #endif
-        // TODO(Sprint 3): Run structured @Generable extraction. Missing → nil, ambiguous → isAmbiguous.
-        return []
+        return RuleBasedDocumentExtractor.extract(from: ocrText)
     }
 
     #if DEBUG

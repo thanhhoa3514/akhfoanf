@@ -54,7 +54,7 @@ struct SampleCopy {
     }
 
     static let english = SampleCopy(
-        clinicName: "Riverside Animal Clinic", vetName: "Dr. Lan Pham", breed: "Shiba Inu",
+        clinicName: "Riverside Animal Clinic", vetName: "Dr. Sarah Chen", breed: "Shiba Inu",
         rabies: "Rabies", combinedVaccine: "DHPP", medication: "Apoquel",
         dosage: "5.4 mg tablet", frequency: "Once daily with food",
         visitTitle: "Annual check-up", visitNotes: "Mild skin allergy. Recheck in 4 weeks.",
@@ -65,7 +65,7 @@ struct SampleCopy {
             "RIVERSIDE ANIMAL CLINIC", "Vaccination certificate", "",
             "Patient: MOCHI   Species: Canine   Breed: Shiba Inu",
             "Rabies - Nobivac 1yr      given 17/12/25",
-            "Next due 17/12/26", "", "Dr. Lan Pham",
+            "Next due 17/12/26", "", "Dr. Sarah Chen",
         ],
         reportTitle: "Check-up report",
         reportLines: [
