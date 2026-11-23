@@ -160,19 +160,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld Einträge brauchen Aufmerksamkeit"
+            "value": "%lld Einträge noch prüfen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld fiches à traiter"
+            "value": "%lld fiches à vérifier"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld件の記録に確認が必要です"
+            "value": "確認が必要な記録: %lld件"
           }
         }
       }
@@ -270,19 +270,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 Eintrag braucht Aufmerksamkeit"
+            "value": "1 Eintrag noch prüfen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "1 fiche à traiter"
+            "value": "1 fiche à vérifier"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "1件の記録に確認が必要です"
+            "value": "確認が必要な記録: 1件"
           }
         }
       }
@@ -1062,13 +1062,13 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Erinnerungshinweise erlauben"
+            "value": "Erinnerungen erlauben"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Autoriser les alertes de rappel"
+            "value": "Autoriser les rappels"
           }
         },
         "ja": {
@@ -1096,7 +1096,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "分析とトラッキング"
+            "value": "分析・トラッキング"
           }
         }
       }
@@ -2333,28 +2333,6 @@
         }
       }
     },
-    "Detail extraction": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details erkennen"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Extraction des détails"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "詳細の抽出"
-          }
-        }
-      }
-    },
     "Details are waiting for your review": {
       "localizations": {
         "de": {
@@ -2492,41 +2470,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dokument nicht gefunden"
+            "value": "Dieses Dokument gibt es nicht mehr"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Document introuvable"
+            "value": "Ce document n’existe plus"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "書類が見つかりません"
-          }
-        }
-      }
-    },
-    "Document references": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dokumentverweise"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Références du document"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "書類の参照"
+            "value": "この書類は見つかりませんでした"
           }
         }
       }
@@ -3702,7 +3658,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verabreicht %@"
+            "value": "Geimpft am %@"
           }
         },
         "fr": {
@@ -3714,7 +3670,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "接種 %@"
+            "value": "接種日 %@"
           }
         }
       }
@@ -3724,7 +3680,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verabreicht %1$@ · nächster Termin %2$@"
+            "value": "Geimpft am %1$@ · nächste Impfung %2$@"
           }
         },
         "fr": {
@@ -3736,7 +3692,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "接種 %1$@ · 次回 %2$@"
+            "value": "接種日 %1$@ · 次回 %2$@"
           }
         }
       }
@@ -4731,40 +4687,18 @@
         }
       }
     },
-    "Needs your attention": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Braucht deine Aufmerksamkeit"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Requiert votre attention"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "確認が必要"
-          }
-        }
-      }
-    },
     "Needs your check": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bitte prüfen"
+            "value": "Bitte kurz prüfen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "À vérifier par vous"
+            "value": "À vérifier"
           }
         },
         "ja": {
@@ -5277,28 +5211,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "記録なし"
-          }
-        }
-      }
-    },
-    "Not available — manual entry": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht verfügbar – manuelle Eingabe"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Indisponible – saisie manuelle"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "利用不可 — 手動入力"
           }
         }
       }
@@ -6100,19 +6012,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tier nicht gefunden"
+            "value": "Dieses Tier gibt es nicht mehr"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Animal introuvable"
+            "value": "Cet animal n’existe plus"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ペットが見つかりません"
+            "value": "このペットは見つかりませんでした"
           }
         }
       }
@@ -6584,19 +6496,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eintrag nicht gefunden"
+            "value": "Diesen Eintrag gibt es nicht mehr"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fiche introuvable"
+            "value": "Cette fiche n’existe plus"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "記録が見つかりません"
+            "value": "この記録は見つかりませんでした"
           }
         }
       }
@@ -6760,7 +6672,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Erinnerungshinweise"
+            "value": "Erinnerungen"
           }
         },
         "fr": {
@@ -6927,28 +6839,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "繰り返し"
-          }
-        }
-      }
-    },
-    "Resolve the items marked in each record, or untick records you don't want.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kläre die markierten Punkte oder wähle Einträge ab, die du nicht möchtest."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réglez les éléments signalés dans chaque fiche, ou décochez celles que vous ne voulez pas."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "各記録の印の付いた項目を確認するか、不要な記録のチェックを外してください。"
           }
         }
       }
@@ -8388,19 +8278,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dies kann nicht widerrufen werden"
+            "value": "Das lässt sich nicht rückgängig machen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Action irréversible"
+            "value": "Impossible de revenir en arrière"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この操作は取り消せません"
+            "value": "元に戻せません"
           }
         }
       }
@@ -9589,6 +9479,138 @@
           "stringUnit": {
             "state": "translated",
             "value": "「%@」— 形式が不明確"
+          }
+        }
+      }
+    },
+    "Breed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rasse"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Race"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "品種"
+          }
+        }
+      }
+    },
+    "Auto-fill from documents": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch ausfüllen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplissage automatique"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書類から自動入力"
+          }
+        }
+      }
+    },
+    "Not on this device — you type the details": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Gerät nicht verfügbar – du trägst Details selbst ein"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indisponible sur cet appareil – vous saisissez les détails"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末では非対応 — 詳細は手入力"
+          }
+        }
+      }
+    },
+    "Links to source documents": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verweise auf Originaldokumente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liens vers les documents"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元の書類へのリンク"
+          }
+        }
+      }
+    },
+    "Check the marked items, or untick any record you don't want to keep.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüf die markierten Punkte oder wähl Einträge ab, die du nicht behalten willst."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez les éléments signalés, ou décochez les fiches que vous ne voulez pas garder."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印の付いた項目を確認するか、不要な記録のチェックを外してください。"
+          }
+        }
+      }
+    },
+    "Waiting for your check": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wartet auf deine Prüfung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de vérification"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "確認待ち"
           }
         }
       }

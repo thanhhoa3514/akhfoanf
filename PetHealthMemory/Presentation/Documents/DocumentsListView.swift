@@ -39,7 +39,7 @@ struct DocumentsListView: View {
             }
 
             if !attention.isEmpty {
-                Section("Needs your attention") {
+                Section("Waiting for your check") {
                     ForEach(attention) { doc in row(doc) }
                 }
             }

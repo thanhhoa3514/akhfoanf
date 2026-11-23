@@ -83,7 +83,7 @@ struct ExportReportView: View {
                 Toggle("Other health events", isOn: $options.includeOtherEvents)
                 Toggle("Weight", isOn: $options.includeWeights)
                 Toggle("Notes", isOn: $options.includeNotes)
-                Toggle("Document references", isOn: $options.includeDocumentReferences)
+                Toggle("Links to source documents", isOn: $options.includeDocumentReferences)
             }
             Section {
                 Button(action: generate) {

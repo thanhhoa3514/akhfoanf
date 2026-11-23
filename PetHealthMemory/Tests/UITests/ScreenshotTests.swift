@@ -19,44 +19,92 @@ final class ScreenshotTests: XCTestCase {
 
     func testTourDark() { tour(scheme: "dark") }
 
+    #if os(iOS)
+    /// German is the longest of the shipping languages: this run catches truncation and overflow.
+    func testTourGerman() { tour(scheme: "light", lang: "de") }
+    #endif
+
     // MARK: - Tour
 
-    private func tour(scheme: String) {
+    private func tour(scheme: String, lang: String = "en") {
+        self.lang = lang
+        let copy = SampleCopy.forLanguage(lang)
+        let prefix = lang == "en" ? scheme : "\(lang)-\(scheme)"
         let app = launch(seeded: true, scheme: scheme)
         XCTAssertTrue(app.staticTexts["Mochi"].firstMatch.waitForExistence(timeout: 15), "Seeded pet should be on Home")
-        snapshot(app, "\(scheme)-01-home")
+        snapshot(app, "\(prefix)-01-home")
 
         #if os(iOS)
-        open(app, tab: "Health History")
-        snapshot(app, "\(scheme)-02-history")
+        open(app, tab: L("Health History"))
+        snapshot(app, "\(prefix)-02-history")
 
-        if tapIfExists(app.staticTexts["Rabies"].firstMatch) {
-            snapshot(app, "\(scheme)-03-event-detail")
+        if tapIfExists(app.staticTexts[copy.rabies].firstMatch) {
+            snapshot(app, "\(prefix)-03-event-detail")
             goBack(app)
         }
 
-        open(app, tab: "Documents")
-        snapshot(app, "\(scheme)-04-documents")
+        // New record form (the "+" menu's primary action).
+        if tapIfExists(app.buttons[L("Add record")].firstMatch) {
+            snapshot(app, "\(prefix)-12-new-record")
+            tapIfExists(app.buttons[L("Cancel")].firstMatch)
+        }
 
-        if tapIfExists(app.staticTexts["Rabies certificate"].firstMatch) {
-            snapshot(app, "\(scheme)-04b-document-detail")
+        open(app, tab: L("Documents"))
+        snapshot(app, "\(prefix)-04-documents")
+
+        if tapIfExists(app.staticTexts[copy.certificateTitle].firstMatch) {
+            snapshot(app, "\(prefix)-04b-document-detail")
             goBack(app)
         }
 
-        if tapIfExists(app.staticTexts["Check-up report"].firstMatch) {
-            if tapIfExists(app.buttons["Review"].firstMatch) {
-                snapshot(app, "\(scheme)-04c-review")
-                tapIfExists(app.buttons["Later"].firstMatch)
+        if tapIfExists(app.staticTexts[copy.reportTitle].firstMatch) {
+            if tapIfExists(app.buttons[L("Review")].firstMatch) {
+                snapshot(app, "\(prefix)-04c-review")
+                tapIfExists(app.buttons[L("Later")].firstMatch)
             }
             goBack(app)
         }
 
-        open(app, tab: "Reminders")
-        snapshot(app, "\(scheme)-05-reminders")
+        open(app, tab: L("Reminders"))
+        snapshot(app, "\(prefix)-05-reminders")
+        if tapIfExists(app.buttons[L("Add reminder")].firstMatch) {
+            snapshot(app, "\(prefix)-13-new-reminder")
+            tapIfExists(app.buttons[L("Cancel")].firstMatch)
+        }
 
-        open(app, tab: "Home")
-        if tapIfExists(app.buttons["Search"].firstMatch) {
-            snapshot(app, "\(scheme)-06-search")
+        open(app, tab: L("Home"))
+        if tapIfExists(app.buttons[L("Search")].firstMatch) {
+            snapshot(app, "\(prefix)-06-search")
+            dismissSheet(app)
+        }
+
+        if tapIfExists(app.buttons[L("Settings")].firstMatch) {
+            snapshot(app, "\(prefix)-07-settings")
+            tapIfExists(app.buttons[L("Done")].firstMatch)
+        }
+
+        if tapIfExists(app.buttons[L("Export PDF")].firstMatch) {
+            snapshot(app, "\(prefix)-08-export")
+            tapIfExists(app.buttons[L("Close")].firstMatch)
+        }
+
+        // Pet profile → weight log → add weight; profile → edit.
+        let openProfile = String(format: L("Open %@ profile"), "Mochi")
+        if tapIfExists(app.buttons[openProfile].firstMatch) {
+            snapshot(app, "\(prefix)-09-pet-profile")
+            if tapIfExists(app.staticTexts[L("Weight")].firstMatch) {
+                snapshot(app, "\(prefix)-10-weight-log")
+                if tapIfExists(app.buttons[L("Add weight")].firstMatch) {
+                    snapshot(app, "\(prefix)-10b-add-weight")
+                    tapIfExists(app.buttons[L("Cancel")].firstMatch)
+                }
+                goBack(app)
+            }
+            if tapIfExists(app.buttons[L("Edit")].firstMatch) {
+                snapshot(app, "\(prefix)-11-edit-pet")
+                tapIfExists(app.buttons[L("Cancel")].firstMatch)
+            }
+            goBack(app)
         }
         #else
         // macOS: three-column split view. Sidebar section → content list → detail.
@@ -90,10 +138,24 @@ final class ScreenshotTests: XCTestCase {
 
     // MARK: - Helpers
 
+    private var lang = "en"
+
+    /// The app's own translation of a UI string (the catalog is compiled into this test bundle too).
+    private func L(_ key: String) -> String {
+        guard lang != "en",
+              let path = Bundle(for: Self.self).path(forResource: lang, ofType: "lproj"),
+              let bundle = Bundle(path: path) else { return key }
+        return bundle.localizedString(forKey: key, value: key, table: "Localizable")
+    }
+
     private func launch(seeded: Bool, scheme: String) -> XCUIApplication {
         let app = XCUIApplication()
         // Always `-key value` pairs (see LaunchOptions in the app).
         app.launchArguments = ["-ui-testing", "YES", "-color-scheme", scheme]
+        if lang != "en" {
+            let locale = ["de": "de_DE", "fr": "fr_FR", "ja": "ja_JP"][lang] ?? "en_US"
+            app.launchArguments += ["-AppleLanguages", "(\(lang))", "-AppleLocale", locale]
+        }
         if seeded { app.launchArguments += ["-seed-sample-data", "YES"] }
         #if os(macOS)
         // Start from a fresh window instead of restoring the previous test's state.
@@ -109,6 +171,13 @@ final class ScreenshotTests: XCTestCase {
         if !tapIfExists(button) {
             XCTFail("Tab '\(tab)' not found")
         }
+    }
+
+    /// Swipes a sheet down by its grabber area (works while the search field hides the nav bar).
+    private func dismissSheet(_ app: XCUIApplication) {
+        let top = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.09))
+        top.press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98)))
+        Thread.sleep(forTimeInterval: 1)
     }
 
     private func goBack(_ app: XCUIApplication) {
